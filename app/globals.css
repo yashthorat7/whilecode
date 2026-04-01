@@ -1,0 +1,118 @@
+@import 'tailwindcss';
+
+@font-face {
+  font-family: 'Fira Code';
+  src: url('/fonts/FiraCode-VariableFont)wght.ttf') format('truetype');
+  font-weight: 300 700;
+  font-style: normal;
+  font-display: swap;
+}
+
+@theme {
+  --color-bg-primary: var(--bg-primary);
+  --color-bg-surface: var(--bg-surface);
+  --color-bg-elevated: var(--bg-elevated);
+  --color-bg-hover: var(--bg-hover);
+  --color-border-primary: var(--border-primary);
+  --color-border-focus: var(--border-focus);
+  --color-text-primary: var(--text-primary);
+  --color-text-secondary: var(--text-secondary);
+  --color-text-accent: var(--text-accent);
+  --color-success: var(--success);
+  --color-error: var(--error);
+  --color-warning: var(--warning);
+  --color-running: var(--running);
+}
+
+:root {
+  --bg-primary: #0d0d0d;
+  --bg-surface: #141414;
+  --bg-elevated: #1a1a1a;
+  --bg-hover: #222222;
+  --border-primary: #2a2a2a;
+  --border-focus: #404040;
+  --text-primary: #c8c8c8;
+  --text-secondary: #707070;
+  --text-accent: #60a5fa;
+  --success: #4ade80;
+  --error: #f87171;
+  --warning: #fbbf24;
+  --running: #60a5fa;
+  --editor-width: 55%;
+}
+
+[data-theme='light'] {
+  --bg-primary: #fafafa;
+  --bg-surface: #ffffff;
+  --bg-elevated: #f0f0f0;
+  --bg-hover: #e8e8e8;
+  --border-primary: #e0e0e0;
+  --border-focus: #c0c0c0;
+  --text-primary: #1a1a1a;
+  --text-secondary: #6b6b6b;
+  --text-accent: #2563eb;
+  --success: #16a34a;
+  --error: #dc2626;
+  --warning: #d97706;
+  --running: #2563eb;
+}
+
+@layer base {
+  html,
+  body {
+    height: 100vh;
+    width: 100vw;
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+    background-color: var(--bg-primary);
+    color: var(--text-primary);
+    font-family:
+      system-ui,
+      -apple-system,
+      sans-serif;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  * {
+    box-sizing: border-box;
+    transition:
+      background-color 150ms ease,
+      border-color 150ms ease,
+      color 150ms ease;
+  }
+
+  ::selection {
+    background-color: color-mix(in srgb, var(--text-accent), transparent 80%);
+    color: inherit;
+  }
+}
+
+@layer components {
+  .app-grid {
+    display: grid;
+    grid-template-rows: 36px 1fr;
+    grid-template-columns: var(--editor-width) 1fr;
+    height: 100vh;
+    width: 100vw;
+    overflow: hidden;
+  }
+
+  ::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+  }
+
+  ::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background: var(--border-primary);
+    border-radius: 3px;
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    background: var(--border-focus);
+  }
+}
