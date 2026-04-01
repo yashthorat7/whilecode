@@ -5,12 +5,23 @@ import { useState } from 'react';
 export default function DocsPanel({ notes, updateNotes, aiAssistant, activeTab }) {
   const { isLoading, error, isOpen, toggleOpen, ask } = aiAssistant;
   const [promptValue, setPromptValue] = useState('');
+  const [isDebouncing, setIsDebouncing] = useState(false);
+  const [showPulse, setShowPulse] = useState(false);
 
   const handleSubmit = async (e) => {
     if (e) e.preventDefault();
-    if (!promptValue.trim() || isLoading) return;
-    await ask(promptValue, activeTab);
+    if (!promptValue.trim() || isLoading || isDebouncing) return;
+    
+    const response = await ask(promptValue, activeTab);
     setPromptValue('');
+
+    if (response) {
+      setShowPulse(true);
+      setTimeout(() => setShowPulse(false), 2000);
+    }
+
+    setIsDebouncing(true);
+    setTimeout(() => setIsDebouncing(false), 2000);
   };
 
   return (
@@ -24,7 +35,7 @@ export default function DocsPanel({ notes, updateNotes, aiAssistant, activeTab }
         onChange={(e) => updateNotes(e.target.value)}
         placeholder="Write your notes, approach, complexity analysis..."
         spellCheck={false}
-        className="flex-1 w-full h-full p-3 font-mono text-[12px] bg-transparent text-text-primary resize-none outline-none overflow-y-auto"
+        className="monospace flex-1 w-full h-full p-3 text-[12px] bg-transparent text-text-primary resize-none outline-none overflow-y-auto"
       />
 
       <div className="absolute bottom-3 right-3 flex flex-col items-end gap-2">
@@ -39,14 +50,14 @@ export default function DocsPanel({ notes, updateNotes, aiAssistant, activeTab }
             value={promptValue}
             onChange={(e) => setPromptValue(e.target.value)}
             onKeyDown={(e) => e.key === 'Enter' && handleSubmit()}
-            placeholder="Ask AI..."
-            disabled={isLoading}
+            placeholder={isDebouncing ? "Wait 2s..." : "Ask AI..."}
+            disabled={isLoading || isDebouncing}
             className="w-[180px] sm:w-[220px] bg-transparent text-[12px] px-2 py-1 outline-none text-text-primary disabled:opacity-50"
           />
           <button
             onClick={handleSubmit}
-            disabled={isLoading || !promptValue.trim()}
-            className="flex items-center justify-center w-[28px] h-[28px] rounded-[6px] bg-text-accent text-white hover:opacity-90 disabled:opacity-50 disabled:cursor-not-allowed transition-all"
+            disabled={isLoading || isDebouncing || !promptValue.trim()}
+            className="flex items-center justify-center w-[28px] h-[28px] rounded-[6px] bg-text-accent text-white hover:opacity-90 disabled:opacity-30 disabled:cursor-not-allowed transition-all"
           >
             {isLoading ? (
               <div className="w-3 h-3 border-2 border-white/30 border-t-white rounded-full animate-spin" />
@@ -58,15 +69,16 @@ export default function DocsPanel({ notes, updateNotes, aiAssistant, activeTab }
 
         <div className="relative">
           {error && isOpen && (
-            <div className="absolute bottom-full right-0 mb-2 whitespace-nowrap text-error text-[11px] font-medium bg-bg-surface px-2 py-1 rounded border border-error/20 shadow-sm">
+            <div className="absolute bottom-full right-0 mb-2 whitespace-nowrap text-[var(--color-error)] text-[11px] font-medium bg-bg-surface px-2 py-1 rounded border border-[var(--color-error)]/20 shadow-sm transition-all animate-bounce">
               {error}
             </div>
           )}
           <button
             onClick={toggleOpen}
             className={`
-              w-[32px] h-[32px] rounded-full bg-bg-elevated border border-border-primary flex items-center justify-center text-text-accent shadow-md transition-all
-              ${isOpen ? 'rotate-90' : 'hover:scale-110 hover:bg-bg-hover'}
+              w-[32px] h-[32px] rounded-full bg-bg-elevated border flex items-center justify-center text-text-accent shadow-md transition-all
+              ${isOpen ? 'rotate-90 border-text-accent/50' : 'hover:scale-110 hover:bg-bg-hover border-border-primary'}
+              ${showPulse ? 'animate-pulse scale-125 bg-text-accent/20' : ''}
             `}
           >
             <span className="text-[18px] leading-none mb-0.5">★</span>

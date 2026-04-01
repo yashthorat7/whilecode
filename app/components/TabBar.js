@@ -1,10 +1,23 @@
 'use client';
 
 export default function TabBar({ tabs, activeTabId, setActiveTabId, addTab, removeTab }) {
+  const handleKeyDown = (e) => {
+    const currentIndex = tabs.findIndex(t => t.id === activeTabId);
+    if (e.key === 'ArrowRight') {
+      const nextIndex = (currentIndex + 1) % tabs.length;
+      setActiveTabId(tabs[nextIndex].id);
+    } else if (e.key === 'ArrowLeft') {
+      const prevIndex = (currentIndex - 1 + tabs.length) % tabs.length;
+      setActiveTabId(tabs[prevIndex].id);
+    }
+  };
+
   return (
     <div
       role="tablist"
-      className="flex h-[36px] overflow-x-auto border-b border-[var(--color-border-primary)] bg-[var(--color-bg-primary)] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
+      onKeyDown={handleKeyDown}
+      tabIndex={0}
+      className="flex h-[36px] overflow-x-auto border-b border-[var(--color-border-primary)] bg-[var(--color-bg-primary)] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden outline-none focus:bg-[var(--color-bg-elevated)] transition-colors"
     >
       <div className="flex shrink-0 flex-row flex-nowrap">
         {tabs.map(tab => {

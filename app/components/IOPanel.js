@@ -50,26 +50,32 @@ export default function IOPanel({
         className="flex flex-col overflow-hidden"
         style={{ height: `${100 - ioHeight}%` }}
       >
-        <div className="text-[12px] text-text-secondary font-semibold p-2 uppercase tracking-wider">
-          Output
+        <div className="flex flex-1 flex-col overflow-hidden">
+        <div className="border-border-primary flex items-center justify-between border-b px-3 py-1.5 backdrop-blur-sm">
+          <span className="text-secondary text-[11px] font-semibold uppercase tracking-wider">Output</span>
         </div>
-        <div className="flex-1 overflow-y-auto px-1">
-          {globalError ? (
-            <div className="p-2 font-mono text-[12px] text-error whitespace-pre-wrap">
-              {globalError}
+        <div className="flex-1 overflow-y-auto p-1.5 [scrollbar-gutter:stable]">
+          {globalError && (
+            <div className="mb-4 rounded-md border border-[var(--color-error)] bg-[var(--color-bg-elevated)] p-3 shadow-md">
+              <div className="mb-1 text-[11px] font-bold text-[var(--color-error)] uppercase">Compilation / Runtime Error</div>
+              <pre className="monospace whitespace-pre-wrap text-[12px] text-[var(--color-text-primary)]">
+                {globalError}
+              </pre>
             </div>
-          ) : (
-            testCases.map((tc, i) => (
+          )}
+          <div className="flex flex-col gap-1">
+            {testCases.map((tc, i) => (
               <IOBox
                 key={tc.id}
                 label={`Case ${i + 1}`}
                 value={tc.output || ''}
+                readOnly
                 status={tc.status}
-                readOnly={true}
               />
-            ))
-          )}
+            ))}
+          </div>
         </div>
+      </div>
       </div>
     </div>
   );
