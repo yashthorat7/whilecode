@@ -1,65 +1,133 @@
-import Image from 'next/image';
+"use client";
+
+import { useState, useEffect, useRef } from "react";
+import { STORAGE_KEYS } from "./utils/constants";
+import { useTabs } from "./hooks/useTabs";
+import { useLayout } from "./hooks/useLayout";
+import { useCodeExecution } from "./hooks/useCodeExecution";
+import { useTheme } from "./hooks/useTheme";
+import { useAiAssistant } from "./hooks/useAiAssistant";
+
+import { TabBar } from "./components/TabBar";
+import { Toolbar } from "./components/Toolbar";
+import { EditorPanel } from "./components/EditorPanel";
+import { DocsPanel } from "./components/DocsPanel";
+import { IOPanel } from "./components/IOPanel";
+import { ResizeHandle } from "./components/ResizeHandle";
+import { SaveModal } from "./components/SaveModal";
 
 export default function Home() {
+  const appRef = useRef(null);
+  const rightPanelRef = useRef(null);
+  const ioPanelRef = useRef(null);
+
+  const [fontSize, setFontSize] = useState(14);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
+  useEffect(() => {
+    const saved = localStorage.getItem(STORAGE_KEYS.FONT_SIZE);
+    if (saved) setFontSize(parseInt(saved, 10));
+  }, []);
+
+  const handleFontSizeChange = (newSize) => {
+    setFontSize(newSize);
+    localStorage.setItem(STORAGE_KEYS.FONT_SIZE, newSize.toString());
+  };
+
+  const tabsApi = useTabs();
+  const layoutApi = useLayout(appRef, rightPanelRef, ioPanelRef);
+  const execApi = useCodeExecution();
+  const themeApi = useTheme();
+  const aiApi = useAiAssistant();
+
+  const { activeTab, updateActiveTab, updateTabCode, updateTabNotes } = tabsApi;
+
   return (
-    <div className="flex flex-1 flex-col items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex w-full max-w-3xl flex-1 flex-col items-center justify-between bg-white px-16 py-32 sm:items-start dark:bg-black">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
+    <main
+      ref={appRef}
+      className="app-grid"
+      style={{ "--editor-width": `${layoutApi.editorWidth}%` }}
+    >
+      <div className="grid-in-tabbar border-r border-border-primary">
+        <TabBar
+          tabs={tabsApi.tabs}
+          activeTabId={activeTab?.id}
+          setActiveTabId={tabsApi.setActiveTabId}
+          addTab={tabsApi.addTab}
+          removeTab={tabsApi.removeTab}
         />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl leading-10 font-semibold tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the page.js file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{' '}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{' '}
-            or the{' '}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{' '}
-            center.
-          </p>
+      </div>
+
+      <div className="grid-in-toolbar">
+        <Toolbar
+          theme={themeApi.theme}
+          toggleTheme={themeApi.toggleTheme}
+          fontSize={fontSize}
+          setFontSize={handleFontSizeChange}
+          docsVisible={layoutApi.docsVisible}
+          toggleDocs={layoutApi.toggleDocs}
+          onSave={() => setIsModalOpen(true)}
+          language={activeTab?.language}
+          setLanguage={(lang) => tabsApi.updateActiveTab({ language: lang })}
+        />
+      </div>
+
+      <div className="grid-in-editor relative overflow-hidden">
+        <EditorPanel
+          code={activeTab?.code}
+          language={activeTab?.language}
+          theme={themeApi.theme}
+          fontSize={fontSize}
+          onChange={tabsApi.updateTabCode}
+          onRun={() => execApi.run(activeTab, tabsApi.updateTestCase)}
+          onSave={() => setIsModalOpen(true)}
+          isRunning={execApi.isRunning}
+        />
+      </div>
+
+      <ResizeHandle direction="horizontal" onMouseDown={layoutApi.startResizeH} />
+
+      <div ref={rightPanelRef} className="grid-in-rightpanel flex flex-col overflow-hidden">
+        {layoutApi.docsVisible && (
+          <>
+            <div className="overflow-auto" style={{ height: `${layoutApi.docsHeight}%` }}>
+              <DocsPanel
+                notes={activeTab?.notes}
+                updateNotes={tabsApi.updateTabNotes}
+                aiAssistant={aiApi}
+                activeTab={activeTab}
+                updateTabCode={tabsApi.updateTabCode}
+                updateTabNotes={tabsApi.updateTabNotes}
+              />
+            </div>
+            <ResizeHandle direction="vertical" onMouseDown={layoutApi.startResizeDocs} />
+          </>
+        )}
+
+        <div ref={ioPanelRef} className="flex-1 overflow-hidden">
+          <IOPanel
+            testCases={activeTab?.testCases || []}
+            addTestCase={tabsApi.addTestCase}
+            removeTestCase={tabsApi.removeTestCase}
+            updateTestCase={tabsApi.updateTestCase}
+            ioHeight={layoutApi.ioHeight}
+            startResizeV={layoutApi.startResizeV}
+          />
         </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="bg-foreground text-background flex h-12 w-full items-center justify-center gap-2 rounded-full px-5 transition-colors hover:bg-[#383838] md:w-[158px] dark:hover:bg-[#ccc]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] md:w-[158px] dark:border-white/[.145] dark:hover:bg-[#1a1a1a]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
-        </div>
-      </main>
-    </div>
+      </div>
+
+      <SaveModal
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+        tabs={tabsApi.tabs}
+      />
+
+      <style jsx global>{`
+        .grid-in-tabbar { grid-area: 1 / 1 / 2 / 2; }
+        .grid-in-toolbar { grid-area: 1 / 2 / 2 / 3; }
+        .grid-in-editor { grid-area: 2 / 1 / 3 / 2; }
+        .grid-in-rightpanel { grid-area: 2 / 2 / 3 / 3; }
+      `}</style>
+    </main>
   );
 }
