@@ -1,5 +1,5 @@
 export const TabBar = () => (
-  <div className="h-full border-b border-border-primary bg-bg-surface p-2 text-xs">
+  <div className="border-border-primary bg-bg-surface h-full border-b p-2 text-xs">
     TabBar Placeholder
   </div>
 );

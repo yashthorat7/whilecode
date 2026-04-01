@@ -17,7 +17,7 @@ export default function RootLayout({ children }) {
           crossOrigin="anonymous"
         />
       </head>
-      <body className="bg-primary text-primary w-screen h-screen overflow-hidden antialiased">
+      <body className="bg-primary text-primary h-screen w-screen overflow-hidden antialiased">
         {children}
       </body>
     </html>

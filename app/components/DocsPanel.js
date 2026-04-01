@@ -1,5 +1,5 @@
 export const DocsPanel = () => (
-  <div className="h-full bg-bg-surface p-4 border-b border-border-primary">
+  <div className="bg-bg-surface border-border-primary h-full border-b p-4">
     DocsPanel Placeholder
   </div>
 );

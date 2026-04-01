@@ -2,10 +2,10 @@ export const getFullCode = (userCode, language) => {
   return userCode;
 };
 
-export const extractFunction = (userCode) => {
+export const extractFunction = userCode => {
   return {
-    returnType: "int",
-    name: "solve",
+    returnType: 'int',
+    name: 'solve',
     args: [],
   };
 };

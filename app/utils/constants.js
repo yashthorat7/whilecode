@@ -1,4 +1,4 @@
-export const DELIMITER = "---CASE_DELIMITER---";
+export const DELIMITER = '---CASE_DELIMITER---';
 
 export const DEFAULT_CODE_CPP = `// solution name
 int solve() {
@@ -11,18 +11,18 @@ int solve() {
 }`;
 
 export const STORAGE_KEYS = {
-  TABS: "cp-tabs",
-  ACTIVE_TAB: "cp-active-tab",
-  THEME: "cp-theme",
-  FONT_SIZE: "cp-font-size",
-  EDITOR_WIDTH: "cp-editor-width",
-  DOCS_VISIBLE: "cp-docs-visible",
-  DOCS_HEIGHT: "cp-docs-height",
+  TABS: 'cp-tabs',
+  ACTIVE_TAB: 'cp-active-tab',
+  THEME: 'cp-theme',
+  FONT_SIZE: 'cp-font-size',
+  EDITOR_WIDTH: 'cp-editor-width',
+  DOCS_VISIBLE: 'cp-docs-visible',
+  DOCS_HEIGHT: 'cp-docs-height',
 };
 
 export const LANGUAGE_OPTIONS = [
-  { id: "cpp", label: "C++", monacoId: "cpp" },
-  { id: "c", label: "C", monacoId: "c" },
+  { id: 'cpp', label: 'C++', monacoId: 'cpp' },
+  { id: 'c', label: 'C', monacoId: 'c' },
 ];
 
 export const FONT_SIZE_RANGE = { min: 10, max: 24, default: 14 };

@@ -1,5 +1,5 @@
 export const Toolbar = () => (
-  <div className="h-full border-b border-border-primary bg-bg-surface p-2 text-xs text-right">
+  <div className="border-border-primary bg-bg-surface h-full border-b p-2 text-right text-xs">
     Toolbar Placeholder
   </div>
 );

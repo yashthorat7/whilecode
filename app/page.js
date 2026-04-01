@@ -1,20 +1,20 @@
-"use client";
+'use client';
 
-import { useState, useEffect, useRef } from "react";
-import { STORAGE_KEYS } from "./utils/constants";
-import { useTabs } from "./hooks/useTabs";
-import { useLayout } from "./hooks/useLayout";
-import { useCodeExecution } from "./hooks/useCodeExecution";
-import { useTheme } from "./hooks/useTheme";
-import { useAiAssistant } from "./hooks/useAiAssistant";
+import { useState, useEffect, useRef } from 'react';
+import { STORAGE_KEYS } from '@/app/utils/constants';
+import { useTabs } from '@/app/hooks/useTabs';
+import { useLayout } from '@/app/hooks/useLayout';
+import { useCodeExecution } from '@/app/hooks/useCodeExecution';
+import { useTheme } from '@/app/hooks/useTheme';
+import { useAiAssistant } from '@/app/hooks/useAiAssistant';
 
-import { TabBar } from "./components/TabBar";
-import { Toolbar } from "./components/Toolbar";
-import { EditorPanel } from "./components/EditorPanel";
-import { DocsPanel } from "./components/DocsPanel";
-import { IOPanel } from "./components/IOPanel";
-import { ResizeHandle } from "./components/ResizeHandle";
-import { SaveModal } from "./components/SaveModal";
+import { TabBar } from '@/app/components/TabBar';
+import { Toolbar } from '@/app/components/Toolbar';
+import { EditorPanel } from '@/app/components/EditorPanel';
+import { DocsPanel } from '@/app/components/DocsPanel';
+import { IOPanel } from '@/app/components/IOPanel';
+import { ResizeHandle } from '@/app/components/ResizeHandle';
+import { SaveModal } from '@/app/components/SaveModal';
 
 export default function Home() {
   const appRef = useRef(null);
@@ -29,7 +29,7 @@ export default function Home() {
     if (saved) setFontSize(parseInt(saved, 10));
   }, []);
 
-  const handleFontSizeChange = (newSize) => {
+  const handleFontSizeChange = newSize => {
     setFontSize(newSize);
     localStorage.setItem(STORAGE_KEYS.FONT_SIZE, newSize.toString());
   };
@@ -40,15 +40,15 @@ export default function Home() {
   const themeApi = useTheme();
   const aiApi = useAiAssistant();
 
-  const { activeTab, updateActiveTab, updateTabCode, updateTabNotes } = tabsApi;
+  const activeTab = tabsApi.activeTab;
 
   return (
     <main
       ref={appRef}
       className="app-grid"
-      style={{ "--editor-width": `${layoutApi.editorWidth}%` }}
+      style={{ '--editor-width': `${layoutApi.editorWidth}%` }}
     >
-      <div className="grid-in-tabbar border-r border-border-primary">
+      <div className="grid-in-tabbar border-border-primary border-r">
         <TabBar
           tabs={tabsApi.tabs}
           activeTabId={activeTab?.id}
@@ -68,7 +68,7 @@ export default function Home() {
           toggleDocs={layoutApi.toggleDocs}
           onSave={() => setIsModalOpen(true)}
           language={activeTab?.language}
-          setLanguage={(lang) => tabsApi.updateActiveTab({ language: lang })}
+          setLanguage={lang => tabsApi.updateActiveTab({ language: lang })}
         />
       </div>
 
@@ -116,17 +116,21 @@ export default function Home() {
         </div>
       </div>
 
-      <SaveModal
-        isOpen={isModalOpen}
-        onClose={() => setIsModalOpen(false)}
-        tabs={tabsApi.tabs}
-      />
+      <SaveModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} tabs={tabsApi.tabs} />
 
       <style jsx global>{`
-        .grid-in-tabbar { grid-area: 1 / 1 / 2 / 2; }
-        .grid-in-toolbar { grid-area: 1 / 2 / 2 / 3; }
-        .grid-in-editor { grid-area: 2 / 1 / 3 / 2; }
-        .grid-in-rightpanel { grid-area: 2 / 2 / 3 / 3; }
+        .grid-in-tabbar {
+          grid-area: 1 / 1 / 2 / 2;
+        }
+        .grid-in-toolbar {
+          grid-area: 1 / 2 / 2 / 3;
+        }
+        .grid-in-editor {
+          grid-area: 2 / 1 / 3 / 2;
+        }
+        .grid-in-rightpanel {
+          grid-area: 2 / 2 / 3 / 3;
+        }
       `}</style>
     </main>
   );
