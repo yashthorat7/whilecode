@@ -22,12 +22,12 @@ export const STORAGE_KEYS = {
 
 export const LANGUAGE_OPTIONS = [
   { id: "cpp", label: "C++", monacoId: "cpp" },
-  { id: "c",   label: "C",   monacoId: "c" },
+  { id: "c", label: "C", monacoId: "c" },
 ];
 
 export const FONT_SIZE_RANGE = { min: 10, max: 24, default: 14 };
 
-export const EXECUTOR_CONFIG = {
+export const PISTON_CONFIG = {
   COMPILE_TIMEOUT: 10000,
   RUN_TIMEOUT: 5000,
   MEMORY_LIMIT: 268435456,
