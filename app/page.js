@@ -9,7 +9,7 @@ import { useTheme } from '@/app/hooks/useTheme';
 import { useAiAssistant } from '@/app/hooks/useAiAssistant';
 
 import TabBar from '@/app/components/TabBar';
-import { Toolbar } from '@/app/components/Toolbar';
+import Toolbar from '@/app/components/Toolbar';
 import { EditorPanel } from '@/app/components/EditorPanel';
 import { DocsPanel } from '@/app/components/DocsPanel';
 import { IOPanel } from '@/app/components/IOPanel';
