@@ -8,7 +8,7 @@ import { useCodeExecution } from '@/app/hooks/useCodeExecution';
 import { useTheme } from '@/app/hooks/useTheme';
 import { useAiAssistant } from '@/app/hooks/useAiAssistant';
 
-import { TabBar } from '@/app/components/TabBar';
+import TabBar from '@/app/components/TabBar';
 import { Toolbar } from '@/app/components/Toolbar';
 import { EditorPanel } from '@/app/components/EditorPanel';
 import { DocsPanel } from '@/app/components/DocsPanel';
