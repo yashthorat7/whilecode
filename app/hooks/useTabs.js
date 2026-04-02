@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { STORAGE_KEYS, DEFAULT_CODE_CPP } from '@/app/utils/constants';
+import { arrayMove } from '@dnd-kit/sortable';
 
 export function useTabs() {
   const [tabs, setTabs] = useState([]);
@@ -9,9 +10,9 @@ export function useTabs() {
 
   const activeTab = tabs.find(t => t.id === activeTabId) || tabs[0] || null;
 
-  const renumber = tabs => tabs.map((tab, i) => ({ ...tab, name: `Sol ${i + 1}` }));
+  const renumber = tabs => tabs.map((tab, i) => ({ ...tab, name: `Solution ${i + 1}` }));
 
-  const createDefaultTab = (name = 'Sol 1') => ({
+  const createDefaultTab = (name = 'Solution 1') => ({
     id: crypto.randomUUID(),
     name,
     language: 'cpp',
@@ -67,7 +68,8 @@ export function useTabs() {
   }, [activeTabId]);
 
   const addTab = () => {
-    const newTab = createDefaultTab(`Sol ${tabs.length + 1}`);
+    if (tabs.length >= 12) return;
+    const newTab = createDefaultTab(`Solution ${tabs.length + 1}`);
     const nextTabs = [...tabs, newTab];
     setTabs(nextTabs);
     setActiveTabId(newTab.id);
@@ -126,6 +128,16 @@ export function useTabs() {
     });
   };
 
+  const reorderTabs = (activeId, overId) => {
+    if (activeId !== overId) {
+      setTabs((items) => {
+        const oldIndex = items.findIndex((t) => t.id === activeId);
+        const newIndex = items.findIndex((t) => t.id === overId);
+        return renumber(arrayMove(items, oldIndex, newIndex));
+      });
+    }
+  };
+
   return {
     tabs,
     activeTab,
@@ -133,6 +145,8 @@ export function useTabs() {
     setActiveTabId,
     addTab,
     removeTab,
+    reorderTabs,
+    canAddTab: tabs.length < 12,
     updateActiveTab,
     updateTabCode,
     updateTabNotes,

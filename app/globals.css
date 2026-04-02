@@ -25,7 +25,7 @@
 
   .sq-btn      { @apply h-7 w-7 bg-gray-800 border border-gray-700 rounded-xl text-gray-500 hover:bg-gray-900 hover:text-gray-300 transition-colors flex items-center justify-center shrink-0; }
 
-  .tab         { @apply relative h-[calc(100%+1px)] px-3 w-32 flex items-center rounded-t-lg border-t border-x text-xs transition-colors; }
+  .tab         { @apply relative h-[calc(100%+1px)] px-3 w-36 flex-initial min-w-0 flex items-center rounded-t-lg border-t border-x text-xs transition-colors; }
   .tab-active  { @apply bg-gray-800 border-gray-700 text-gray-200 z-20; }
   .tab-inactive { @apply bg-gray-800/40 border-transparent text-gray-500  z-0; }
 
