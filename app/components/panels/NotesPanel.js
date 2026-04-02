@@ -5,7 +5,6 @@ export default function NotesPanel() {
   return (
     <Panel
       className="flex-1"
-      header="NOTES"
       actions={
         <button className="icon-btn">
           <Sparkles className="w-3.5 h-3.5" strokeWidth={1.5} />

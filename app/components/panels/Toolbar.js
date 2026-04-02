@@ -7,12 +7,12 @@ export default function Toolbar({ fontSize, setFontSize }) {
   const inc = () => setFontSize((s) => Math.min(30, s + 1));
 
   return (
-    <div className="h-[26px] mb-2 flex justify-end items-center gap-1.5">
+    <div className="h-7 mb-2 flex justify-end items-center gap-2">
       <SegmentedButton>
         <button><FileText className="w-3.5 h-3.5" strokeWidth={1.5} /></button>
         <button><Download className="w-3.5 h-3.5" strokeWidth={1.5} /></button>
         <div className="w-8 h-full flex items-center justify-center relative select-none group">
-          <span className="text-[11px] text-gray-500 group-hover:text-gray-300 transition-colors z-0">{fontSize}</span>
+          <span className="text-xs text-gray-500 group-hover:text-gray-300 transition-colors z-0">{fontSize}</span>
           <div className="absolute inset-0 flex">
             <button className="flex-1" onClick={dec} />
             <button className="flex-1" onClick={inc} />
