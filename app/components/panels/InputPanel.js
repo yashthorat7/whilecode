@@ -1,12 +1,6 @@
 import { Plus, X } from 'lucide-react';
 import Panel from '../ui/Panel';
-import { useTabs } from '../../hooks/useTabs';
-
-export default function InputPanel() {
-  const { activeTab, addTestCase, removeTestCase, updateTestCase } = useTabs();
-
-  if (!activeTab) return <Panel className="flex-1" header="INPUT" />;
-
+export default function InputPanel({ testCases, addTestCase, removeTestCase, updateTestCase }) {
   return (
     <Panel
       className="flex-1 overflow-hidden"
@@ -18,7 +12,7 @@ export default function InputPanel() {
       }
     >
       <div className="h-full divide-y divide-gray-700 overflow-y-auto select-none">
-        {activeTab.testCases.map((tc, i) => (
+        {testCases.map((tc, i) => (
           <div key={tc.id} className="group relative flex min-h-[32px] items-center px-2 py-4">
             <textarea
               className="w-full resize-none overflow-hidden bg-transparent font-mono text-[14px] whitespace-pre-wrap text-gray-300 outline-none placeholder:text-gray-700"
@@ -40,7 +34,7 @@ export default function InputPanel() {
               spellCheck={false}
               rows={1}
             />
-            {activeTab.testCases.length > 1 && (
+            {testCases.length > 1 && (
               <button
                 onClick={() => removeTestCase(tc.id)}
                 className="absolute top-1.5 right-1.5 p-1 text-gray-600 opacity-0 transition-opacity group-hover:opacity-100 hover:text-gray-400"
@@ -54,3 +48,4 @@ export default function InputPanel() {
     </Panel>
   );
 }
+

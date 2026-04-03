@@ -1,9 +1,9 @@
 export const DELIMITER = '---CASE_DELIMITER---';
 
-export const DEFAULT_CODE_CPP = `// solution name
-int solve() {
-    return 0;
+export const DEFAULT_CODE_CPP = `int add(int a, int b) {
+    return a + b;
 }`;
+
 
 export const DEFAULT_CODE_C = `// solution name
 int solve() {

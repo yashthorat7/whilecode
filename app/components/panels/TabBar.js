@@ -12,9 +12,15 @@ import {
 import { SortableContext, horizontalListSortingStrategy } from '@dnd-kit/sortable';
 import { restrictToHorizontalAxis, restrictToParentElement } from '@dnd-kit/modifiers';
 
-export default function TabBar() {
-  const { tabs, activeTabId, setActiveTabId, addTab, removeTab, reorderTabs, canAddTab } =
-    useTabs();
+export default function TabBar({
+  tabs,
+  activeTabId,
+  setActiveTabId,
+  addTab,
+  removeTab,
+  reorderTabs,
+  canAddTab,
+}) {
 
   const sensors = useSensors(
     useSensor(PointerSensor, {

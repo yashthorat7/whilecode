@@ -1,11 +1,6 @@
 import Panel from '../ui/Panel';
-import { useTabs } from '../../hooks/useTabs';
 
-export default function OutputPanel() {
-  const { activeTab } = useTabs();
-
-  if (!activeTab) return <Panel className="flex-1" header="OUTPUT" />;
-
+export default function OutputPanel({ testCases }) {
   return (
     <Panel
       className="flex-1 overflow-hidden"
@@ -13,7 +8,7 @@ export default function OutputPanel() {
       actions={<span className="font-mono text-[10px] text-gray-500">O(n)</span>}
     >
       <div className="h-full divide-y divide-gray-700 overflow-y-auto select-none">
-        {activeTab.testCases.map((tc, index) => (
+        {testCases.map((tc, index) => (
           <div key={tc.id} className="flex min-h-[32px] items-center px-2 py-4">
             <div
               className={`w-full font-mono text-[14px] whitespace-pre-wrap ${
@@ -34,3 +29,4 @@ export default function OutputPanel() {
     </Panel>
   );
 }
+

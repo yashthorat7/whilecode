@@ -1,10 +1,6 @@
 import { Sparkles } from 'lucide-react';
 import Panel from '../ui/Panel';
-import { useTabs } from '../../hooks/useTabs';
-
-export default function NotesPanel() {
-  const { activeTab, updateTabNotes } = useTabs();
-
+export default function NotesPanel({ notes, updateNotes }) {
   return (
     <Panel
       className="flex-1"
@@ -17,10 +13,11 @@ export default function NotesPanel() {
       <textarea
         className="h-full w-full resize-none bg-transparent p-2 font-mono text-[14px] whitespace-pre-wrap text-gray-300 outline-none placeholder:text-gray-700"
         placeholder="notes here..."
-        value={activeTab?.notes || ''}
-        onChange={e => updateTabNotes(e.target.value)}
+        value={notes || ''}
+        onChange={e => updateNotes(e.target.value)}
         spellCheck={false}
       />
     </Panel>
   );
 }
+

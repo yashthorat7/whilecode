@@ -11,7 +11,13 @@ export default function SidePanels({
   setIsSaveModalOpen,
   tabs,
   activeTabId,
+  activeTab,
+  updateTabNotes,
+  updateTestCase,
+  addTestCase,
+  removeTestCase,
 }) {
+
   const [heights, setHeights] = useState(showNotes ? [33.3, 33.3, 33.4] : [0, 50, 50]);
   const containerRef = useRef(null);
 
@@ -87,7 +93,7 @@ export default function SidePanels({
         {showNotes && (
           <>
             <div style={{ flexBasis: `${heights[0]}%` }} className="flex min-h-0 flex-col">
-              <NotesPanel />
+              <NotesPanel notes={activeTab?.notes} updateNotes={updateTabNotes} />
             </div>
             <ResizeHandle orientation="horizontal" onResize={d => handleResize(0, d)} />
           </>
@@ -98,7 +104,12 @@ export default function SidePanels({
           }}
           className="flex min-h-0 flex-1 flex-col"
         >
-          <InputPanel />
+          <InputPanel
+            testCases={activeTab?.testCases || []}
+            addTestCase={addTestCase}
+            removeTestCase={removeTestCase}
+            updateTestCase={updateTestCase}
+          />
         </div>
         <ResizeHandle orientation="horizontal" onResize={d => handleResize(1, d)} />
         <div
@@ -107,8 +118,9 @@ export default function SidePanels({
           }}
           className="flex min-h-0 flex-1 flex-col"
         >
-          <OutputPanel />
+          <OutputPanel testCases={activeTab?.testCases || []} />
         </div>
+
       </div>
     </div>
   );

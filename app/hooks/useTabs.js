@@ -10,7 +10,37 @@ export function useTabs() {
 
   const activeTab = tabs.find(t => t.id === activeTabId) || tabs[0] || null;
 
-  const renumber = tabs => tabs.map((tab, i) => ({ ...tab, name: `Solution ${i + 1}` }));
+  const getDynamicName = code => {
+    const lineComment = code.match(/\/\/\s*(.*?)(\n|$)/);
+    const blockComment = code.match(/\/\*\s*([\s\S]*?)\*\//);
+
+    let commentText = '';
+    if (lineComment && blockComment) {
+      commentText = lineComment.index < blockComment.index ? lineComment[1] : blockComment[1];
+    } else if (lineComment) {
+      commentText = lineComment[1];
+    } else if (blockComment) {
+      commentText = blockComment[1];
+    }
+
+    const words = commentText
+      .trim()
+      .split(/\s+/)
+      .filter(w => w.length > 0)
+      .slice(0, 3);
+    return words.length > 0 ? words.join(' ') : null;
+  };
+
+  const getNextDefaultName = (currentTabs = []) => {
+    let nextNum = 1;
+    const names = new Set(currentTabs.map(t => t.name));
+    while (names.has(`Solution ${nextNum}`)) {
+      nextNum++;
+    }
+    return `Solution ${nextNum}`;
+  };
+
+
 
   const createDefaultTab = (name = 'Solution 1') => ({
     id: crypto.randomUUID(),
@@ -41,7 +71,7 @@ export function useTabs() {
     let initialTabs = [];
 
     if (storedTabs) {
-      initialTabs = renumber(JSON.parse(storedTabs).map(migrate));
+      initialTabs = JSON.parse(storedTabs).map(migrate);
     } else {
       initialTabs = [createDefaultTab()];
     }
@@ -69,11 +99,14 @@ export function useTabs() {
 
   const addTab = () => {
     if (tabs.length >= 12) return;
-    const newTab = createDefaultTab(`Solution ${tabs.length + 1}`);
+    const nextName = getNextDefaultName(tabs);
+    const newTab = createDefaultTab(nextName);
     const nextTabs = [...tabs, newTab];
     setTabs(nextTabs);
     setActiveTabId(newTab.id);
   };
+
+
 
   const removeTab = id => {
     let nextTabs = tabs.filter(t => t.id !== id);
@@ -86,13 +119,12 @@ export function useTabs() {
       return;
     }
 
-    const updatedTabs = renumber(nextTabs);
-    setTabs(updatedTabs);
+    setTabs(nextTabs);
 
     if (id === activeTabId) {
       const deletedIndex = tabs.findIndex(t => t.id === id);
-      const nextActiveIndex = Math.min(deletedIndex, updatedTabs.length - 1);
-      setActiveTabId(updatedTabs[nextActiveIndex].id);
+      const nextActiveIndex = Math.min(deletedIndex, nextTabs.length - 1);
+      setActiveTabId(nextTabs[nextActiveIndex].id);
     }
   };
 
@@ -100,7 +132,16 @@ export function useTabs() {
     setTabs(prev => prev.map(t => (t.id === activeTabId ? { ...t, ...partial } : t)));
   };
 
-  const updateTabCode = code => updateActiveTab({ code });
+  const updateTabCode = code => {
+    setTabs(prev =>
+      prev.map(t => {
+        if (t.id !== activeTabId) return t;
+        const dynamicName = getDynamicName(code);
+        return { ...t, code, name: dynamicName || t.name };
+      })
+    );
+  };
+
   const updateTabNotes = notes => updateActiveTab({ notes });
   const updateTabLanguage = language => updateActiveTab({ language });
 
@@ -133,7 +174,7 @@ export function useTabs() {
       setTabs(items => {
         const oldIndex = items.findIndex(t => t.id === activeId);
         const newIndex = items.findIndex(t => t.id === overId);
-        return renumber(arrayMove(items, oldIndex, newIndex));
+        return arrayMove(items, oldIndex, newIndex);
       });
     }
   };

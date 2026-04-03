@@ -1,4 +1,4 @@
-import { FileText, Download, Moon } from 'lucide-react';
+import { FileText, Download, Moon, Sun } from 'lucide-react';
 import Button from '../ui/Button';
 import SegmentedButton from '../ui/SegmentedButton';
 
@@ -9,26 +9,29 @@ export default function Toolbar({
   setShowNotes,
   onDownload,
   isSaveModalOpen,
+  theme,
+  toggleTheme,
 }) {
   const dec = () => setFontSize(s => Math.max(10, s - 1));
   const inc = () => setFontSize(s => Math.min(30, s + 1));
+
 
   return (
     <div className="mb-2 flex h-7 items-center justify-end gap-2">
       <SegmentedButton>
         <button
           onClick={() => setShowNotes(!showNotes)}
-          className={showNotes ? 'text-gray-300' : 'text-gray-500'}
+          className={`seg-cell ${showNotes ? 'text-gray-300' : 'text-gray-500'}`}
         >
           <FileText className="h-3.5 w-3.5" strokeWidth={1.5} />
         </button>
         <button
           onClick={onDownload}
-          className={isSaveModalOpen ? 'text-gray-200' : 'text-gray-500'}
+          className={`seg-cell ${isSaveModalOpen ? 'text-gray-200' : 'text-gray-500'}`}
         >
           <Download className="h-3.5 w-3.5" strokeWidth={1.5} />
         </button>
-        <div className="group relative flex h-full w-8 items-center justify-center select-none">
+        <div className="seg-cell group relative select-none">
           <span className="z-0 text-xs text-gray-500 transition-colors group-hover:text-gray-300">
             {fontSize}
           </span>
@@ -37,10 +40,19 @@ export default function Toolbar({
             <button className="flex-1" onClick={inc} />
           </div>
         </div>
-        <button>
-          <Moon className="h-3.5 w-3.5" strokeWidth={1.5} />
+        <button
+          onClick={toggleTheme}
+          className="seg-cell text-gray-500 hover:text-gray-300 transition-colors"
+        >
+          {theme === 'dark' ? (
+            <Sun className="h-3.5 w-3.5" strokeWidth={1.5} />
+          ) : (
+            <Moon className="h-3.5 w-3.5" strokeWidth={1.5} />
+          )}
         </button>
       </SegmentedButton>
+
+
 
       <Button href="https://github.com/yashthorat7" target="_blank" rel="noopener noreferrer">
         <svg
