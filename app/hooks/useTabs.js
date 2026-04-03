@@ -130,9 +130,9 @@ export function useTabs() {
 
   const reorderTabs = (activeId, overId) => {
     if (activeId !== overId) {
-      setTabs((items) => {
-        const oldIndex = items.findIndex((t) => t.id === activeId);
-        const newIndex = items.findIndex((t) => t.id === overId);
+      setTabs(items => {
+        const oldIndex = items.findIndex(t => t.id === activeId);
+        const newIndex = items.findIndex(t => t.id === overId);
         return renumber(arrayMove(items, oldIndex, newIndex));
       });
     }

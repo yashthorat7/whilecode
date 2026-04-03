@@ -1,4 +1,4 @@
-export default function Panel({ children, className = "", header, actions }) {
+export default function Panel({ children, className = '', header, actions }) {
   return (
     <div className={`panel relative ${className}`}>
       {header ? (
@@ -7,13 +7,9 @@ export default function Panel({ children, className = "", header, actions }) {
           <div className="panel-actions">{actions}</div>
         </div>
       ) : (
-        actions && (
-          <div className="panel-actions absolute top-2 right-2 z-30">
-            {actions}
-          </div>
-        )
+        actions && <div className="panel-actions absolute top-2 right-2 z-30">{actions}</div>
       )}
-      <div className="flex-1 min-h-0">{children}</div>
+      <div className="min-h-0 flex-1">{children}</div>
     </div>
   );
 }

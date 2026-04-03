@@ -24,31 +24,37 @@ export async function POST(req) {
         compile_timeout: PISTON_CONFIG.COMPILE_TIMEOUT,
         run_timeout: PISTON_CONFIG.RUN_TIMEOUT,
         compile_memory_limit: PISTON_CONFIG.MEMORY_LIMIT,
-        run_memory_limit: PISTON_CONFIG.MEMORY_LIMIT
-      })
+        run_memory_limit: PISTON_CONFIG.MEMORY_LIMIT,
+      }),
     });
 
     const data = await response.json();
 
     if (data.compile && data.compile.code !== 0) {
-      return NextResponse.json({
-        type: 'compile_error',
-        message: data.compile.stderr
-      }, { status: 400 });
+      return NextResponse.json(
+        {
+          type: 'compile_error',
+          message: data.compile.stderr,
+        },
+        { status: 400 }
+      );
     }
 
     if (data.run && data.run.code !== 0) {
-      return NextResponse.json({
-        type: 'runtime_error',
-        message: data.run.stderr,
-        signal: data.run.signal
-      }, { status: 400 });
+      return NextResponse.json(
+        {
+          type: 'runtime_error',
+          message: data.run.stderr,
+          signal: data.run.signal,
+        },
+        { status: 400 }
+      );
     }
 
     return NextResponse.json({
       stdout: data.run.stdout,
       stderr: data.run.stderr,
-      time: data.run.time || 0
+      time: data.run.time || 0,
     });
   } catch (err) {
     return NextResponse.json({ error: 'Execution failed' }, { status: 500 });

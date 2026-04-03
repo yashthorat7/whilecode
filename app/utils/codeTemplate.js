@@ -23,13 +23,19 @@ export function extractFunction(userCode) {
   if (!lastMatch) return null;
 
   const [_, returnType, name, argsStr] = lastMatch;
-  const args = argsStr.split(',').filter(a => a.trim()).map(arg => {
-    const parts = arg.trim().split(/\s+/);
-    const name = parts.pop().replace(/[&*]/g, '');
-    const type = parts.join(' ').replace(/\s*const\s*/g, '').trim();
-    const isRef = arg.includes('&');
-    return { type, name, isRef };
-  });
+  const args = argsStr
+    .split(',')
+    .filter(a => a.trim())
+    .map(arg => {
+      const parts = arg.trim().split(/\s+/);
+      const name = parts.pop().replace(/[&*]/g, '');
+      const type = parts
+        .join(' ')
+        .replace(/\s*const\s*/g, '')
+        .trim();
+      const isRef = arg.includes('&');
+      return { type, name, isRef };
+    });
 
   return { returnType: returnType.trim(), name: name.trim(), args };
 }
@@ -97,24 +103,30 @@ int main() {
   ${sig.args.map(arg => `${arg.type} ${arg.name};`).join('\n  ')}
   while (1) {
     int res = 0;
-    ${sig.args.map((arg, i) => {
-      let format = '';
-      if (arg.type === 'int') format = '%d';
-      else if (arg.type === 'long long') format = '%lld';
-      else if (arg.type === 'float') format = '%f';
-      else if (arg.type === 'double') format = '%lf';
-      else if (arg.type === 'char') format = ' %c';
-      else if (arg.type === 'char*' || arg.type.includes('[')) format = '%s';
-      return `res += scanf("${format}", &${arg.name});`;
-    }).join('\n    ')}
+    ${sig.args
+      .map((arg, i) => {
+        let format = '';
+        if (arg.type === 'int') format = '%d';
+        else if (arg.type === 'long long') format = '%lld';
+        else if (arg.type === 'float') format = '%f';
+        else if (arg.type === 'double') format = '%lf';
+        else if (arg.type === 'char') format = ' %c';
+        else if (arg.type === 'char*' || arg.type.includes('[')) format = '%s';
+        return `res += scanf("${format}", &${arg.name});`;
+      })
+      .join('\n    ')}
     if (res < ${sig.args.length}) break;
     ${sig.returnType === 'void' ? `${sig.name}(${sig.args.map(a => a.name).join(', ')});` : `${sig.returnType} result = ${sig.name}(${sig.args.map(a => a.name).join(', ')});`}
-    ${sig.returnType !== 'void' ? `
+    ${
+      sig.returnType !== 'void'
+        ? `
       if (strcmp("${sig.returnType}", "int") == 0) printf("%d\\n", result);
       else if (strcmp("${sig.returnType}", "long long") == 0) printf("%lld\\n", result);
       else if (strcmp("${sig.returnType}", "double") == 0) printf("%.6f\\n", result);
       else if (strcmp("${sig.returnType}", "float") == 0) printf("%f\\n", result);
-    ` : ''}
+    `
+        : ''
+    }
     printf("${DELIMITER}\\n");
     fflush(stdout);
   }

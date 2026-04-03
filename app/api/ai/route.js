@@ -59,11 +59,11 @@ USER PROMPT: ${prompt}
       model: 'llama-3.3-70b-versatile',
       messages: [
         { role: 'system', content: SYSTEM_PROMPT },
-        { role: 'user', content: userMessage }
+        { role: 'user', content: userMessage },
       ],
       temperature: 0.3,
       max_tokens: 2048,
-      response_format: { type: 'json_object' }
+      response_format: { type: 'json_object' },
     });
 
     const content = completion.choices[0]?.message?.content;
@@ -72,7 +72,7 @@ USER PROMPT: ${prompt}
     }
 
     const parsed = JSON.parse(content);
-    
+
     if (!parsed.changeType) {
       throw new Error('Invalid AI response structure');
     }
