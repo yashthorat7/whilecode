@@ -2,14 +2,19 @@ import { FileText, Download, Moon } from "lucide-react";
 import Button from "../ui/Button";
 import SegmentedButton from "../ui/SegmentedButton";
 
-export default function Toolbar({ fontSize, setFontSize }) {
+export default function Toolbar({ fontSize, setFontSize, showNotes, setShowNotes }) {
   const dec = () => setFontSize((s) => Math.max(10, s - 1));
   const inc = () => setFontSize((s) => Math.min(30, s + 1));
 
   return (
     <div className="h-7 mb-2 flex justify-end items-center gap-2">
       <SegmentedButton>
-        <button><FileText className="w-3.5 h-3.5" strokeWidth={1.5} /></button>
+        <button 
+          onClick={() => setShowNotes(!showNotes)} 
+          className={showNotes ? "text-gray-300" : "text-gray-500"}
+        >
+          <FileText className="w-3.5 h-3.5" strokeWidth={1.5} />
+        </button>
         <button><Download className="w-3.5 h-3.5" strokeWidth={1.5} /></button>
         <div className="w-8 h-full flex items-center justify-center relative select-none group">
           <span className="text-xs text-gray-500 group-hover:text-gray-300 transition-colors z-0">{fontSize}</span>

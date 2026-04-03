@@ -13,7 +13,7 @@ export default function Panel({ children, className = "", header, actions }) {
           </div>
         )
       )}
-      <div className="flex-1">{children}</div>
+      <div className="flex-1 min-h-0">{children}</div>
     </div>
   );
 }
