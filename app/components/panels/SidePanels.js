@@ -16,6 +16,9 @@ export default function SidePanels({
   updateTestCase,
   addTestCase,
   removeTestCase,
+  globalError,
+  onAiRefine,
+  isAiLoading,
 }) {
 
   const [heights, setHeights] = useState(showNotes ? [33.3, 33.3, 33.4] : [0, 50, 50]);
@@ -93,7 +96,12 @@ export default function SidePanels({
         {showNotes && (
           <>
             <div style={{ flexBasis: `${heights[0]}%` }} className="flex min-h-0 flex-col">
-              <NotesPanel notes={activeTab?.notes} updateNotes={updateTabNotes} />
+              <NotesPanel
+                notes={activeTab?.notes}
+                updateNotes={updateTabNotes}
+                onAiRefine={onAiRefine}
+                isAiLoading={isAiLoading}
+              />
             </div>
             <ResizeHandle orientation="horizontal" onResize={d => handleResize(0, d)} />
           </>
@@ -118,7 +126,7 @@ export default function SidePanels({
           }}
           className="flex min-h-0 flex-1 flex-col"
         >
-          <OutputPanel testCases={activeTab?.testCases || []} />
+          <OutputPanel testCases={activeTab?.testCases || []} globalError={globalError} />
         </div>
 
       </div>

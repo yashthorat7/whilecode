@@ -16,7 +16,7 @@ export default function InputPanel({ testCases, addTestCase, removeTestCase, upd
           <div key={tc.id} className="group relative flex min-h-[32px] items-center px-2 py-4">
             <textarea
               className="w-full resize-none overflow-hidden bg-transparent font-mono text-[14px] whitespace-pre-wrap text-gray-300 outline-none placeholder:text-gray-700"
-              placeholder={`Test case ${i + 1}`}
+              placeholder="..."
               value={tc.input}
               onChange={e => {
                 updateTestCase(tc.id, { input: e.target.value });
@@ -37,7 +37,7 @@ export default function InputPanel({ testCases, addTestCase, removeTestCase, upd
             {testCases.length > 1 && (
               <button
                 onClick={() => removeTestCase(tc.id)}
-                className="absolute top-1.5 right-1.5 p-1 text-gray-600 opacity-0 transition-opacity group-hover:opacity-100 hover:text-gray-400"
+                className="absolute top-1/2 right-1.5 -translate-y-1/2 p-1 text-gray-600 opacity-0 transition-opacity group-hover:opacity-100 hover:text-gray-400"
               >
                 <X className="h-4 w-4" strokeWidth={1.5} />
               </button>

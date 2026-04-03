@@ -8,6 +8,7 @@ import ResizeHandle from './components/ui/ResizeHandle';
 import { useTabs } from './hooks/useTabs';
 import { useTheme } from './hooks/useTheme';
 import { useCodeExecution } from './hooks/useCodeExecution';
+import { useAiAssistant } from './hooks/useAiAssistant';
 
 export default function Page() {
   const [fontSize, setFontSize] = useState(14);
@@ -31,7 +32,8 @@ export default function Page() {
     removeTestCase,
   } = useTabs();
   const { theme, toggleTheme } = useTheme();
-  const { run, isRunning } = useCodeExecution();
+  const { run, isRunning, globalError } = useCodeExecution();
+  const { ask, isLoading: isAiLoading } = useAiAssistant();
 
   const handleResize = deltaX => {
     const totalWidth = window.innerWidth;
@@ -41,6 +43,14 @@ export default function Page() {
 
   const handleRun = tab => {
     run(tab, updateTestCase);
+  };
+
+  const handleAiRefine = async () => {
+    if (!activeTab || isAiLoading) return;
+    const result = await ask(activeTab.notes || 'Refine this code.', activeTab);
+    if (result && result.code) {
+      updateTabCode(result.code);
+    }
   };
 
   return (
@@ -92,6 +102,9 @@ export default function Page() {
           updateTestCase={updateTestCase}
           addTestCase={addTestCase}
           removeTestCase={removeTestCase}
+          globalError={globalError}
+          onAiRefine={handleAiRefine}
+          isAiLoading={isAiLoading}
         />
       </div>
     </main>

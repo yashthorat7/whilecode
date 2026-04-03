@@ -163,10 +163,16 @@ export function useTabs() {
     });
   };
 
-  const updateTestCase = (id, partial) => {
-    updateActiveTab({
-      testCases: activeTab.testCases.map(tc => (tc.id === id ? { ...tc, ...partial } : tc)),
-    });
+  const updateTestCase = (tcId, updates, tabId = activeTabId) => {
+    setTabs(prev =>
+      prev.map(tab => {
+        if (tab.id !== tabId) return tab;
+        return {
+          ...tab,
+          testCases: tab.testCases.map(tc => (tc.id === tcId ? { ...tc, ...updates } : tc)),
+        };
+      })
+    );
   };
 
   const reorderTabs = (activeId, overId) => {

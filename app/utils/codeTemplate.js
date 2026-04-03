@@ -1,139 +1,125 @@
 import { DELIMITER } from './constants';
 
-export function extractFunction(userCode) {
-  const lines = userCode.split('\n');
-  let firstCodeLine = 0;
-  for (let i = 0; i < lines.length; i++) {
-    const trimmed = lines[i].trim();
-    if (trimmed && !trimmed.startsWith('//') && !trimmed.startsWith('/*')) {
-      firstCodeLine = i;
-      break;
-    }
-  }
-
-  const codeAfterPreamble = lines.slice(firstCodeLine).join('\n');
-  const functionRegex = /([\w<>,:\s&*]+)\s+(\w+)\s*\(([\s\S]*?)\)\s*\{/g;
-  let match;
-  let lastMatch = null;
-
-  while ((match = functionRegex.exec(codeAfterPreamble)) !== null) {
-    lastMatch = match;
-  }
-
-  if (!lastMatch) return null;
-
-  const [_, returnType, name, argsStr] = lastMatch;
-  const args = argsStr
-    .split(',')
-    .filter(a => a.trim())
-    .map(arg => {
-      const parts = arg.trim().split(/\s+/);
-      const name = parts.pop().replace(/[&*]/g, '');
-      const type = parts
-        .join(' ')
-        .replace(/\s*const\s*/g, '')
-        .trim();
-      const isRef = arg.includes('&');
-      return { type, name, isRef };
-    });
-
-  return { returnType: returnType.trim(), name: name.trim(), args };
+const CPP_INPUT_HELPERS = `
+template<typename T> ostream& operator<<(ostream& os, const vector<T>& v) {
+    os << "[";
+    for(size_t i=0; i<v.size(); ++i) { if(i) os << ", "; os << v[i]; }
+    os << "]";
+    return os;
 }
-
-export function getFullCode(userCode, language) {
-  const sig = extractFunction(userCode);
-  if (!sig) return userCode;
-
-  if (language === 'cpp') {
-    return `
-#include <bits/stdc++.h>
-using namespace std;
-
-template<typename T>
-ostream& operator<<(ostream& os, const vector<T>& v) {
-  os << "[";
-  for (size_t i = 0; i < v.size(); ++i) {
-    if (i) os << ", ";
-    os << v[i];
-  }
-  return os << "]";
-}
-
-template<typename T1, typename T2>
-ostream& operator<<(ostream& os, const pair<T1, T2>& p) {
-  return os << "(" << p.first << ", " << p.second << ")";
+template<typename T1, typename T2> ostream& operator<<(ostream& os, const pair<T1,T2>& p) {
+    os << "(" << p.first << ", " << p.second << ")";
+    return os;
 }
 
 template<typename T> void read(T& x) { cin >> x; }
 void read(string& x) { cin >> x; }
-template<typename T> void read(vector<T>& v) {
-  int n; cin >> n;
-  v.resize(n);
-  for (int i = 0; i < n; i++) read(v[i]);
-}
 template<typename T1, typename T2> void read(pair<T1, T2>& p) {
-  read(p.first); read(p.second);
+    char c;
+    while(cin && isspace(cin.peek())) cin.ignore();
+    if(cin.peek() == '(') {
+        cin >> c;
+        read(p.first);
+        while(cin && (isspace(cin.peek()) || cin.peek() == ',')) cin.ignore();
+        read(p.second);
+        while(cin && (isspace(cin.peek()) || cin.peek() == ')')) cin.ignore();
+    } else {
+        read(p.first);
+        read(p.second);
+    }
+}
+template<typename T> void read(vector<T>& v) {
+    while(cin && isspace(cin.peek())) cin.ignore();
+    if(cin.peek() == '[') {
+        char c; cin >> c;
+        while(cin) {
+            while(cin && (isspace(cin.peek()) || cin.peek() == ',')) cin.ignore();
+            if(cin.peek() == ']') { cin.ignore(); break; }
+            if(cin.peek() == EOF) break;
+            T x; if(cin >> x) v.push_back(x);
+            else break;
+        }
+    } else {
+        string line;
+        if(getline(cin, line)) {
+            istringstream iss(line);
+            T x;
+            while(iss >> x) v.push_back(x);
+        }
+    }
+}
+`;
+
+
+export function extractFunction(fullCode, language = 'cpp') {
+  if (!fullCode) return '';
+  let lines = fullCode.split('\n');
+  let functionStart = -1;
+  let inTemplate = false;
+
+  const funcRegex = /^[a-zA-Z0-9_<>:,\s*&]+[ \t]+[a-zA-Z0-9_]+[ \t]*\([^{]*\)[ \t]*{/;
+
+  for (let i = 0; i < lines.length; i++) {
+    let line = lines[i].trim();
+    if (!line || line.startsWith('#include') || line.startsWith('using namespace') || (line.startsWith('//') && i < 10)) continue;
+    if (line.startsWith('template<')) { inTemplate = true; continue; }
+    if (inTemplate) { if (line.includes('}')) inTemplate = false; continue; }
+    if (line.includes('operator<<') || line.includes('void read(')) continue;
+    if (funcRegex.test(line) && !line.includes('int main')) functionStart = i;
+  }
+
+  if (functionStart === -1) return fullCode;
+
+  let result = [];
+  for (let i = functionStart; i < lines.length; i++) {
+    if (lines[i].includes('int main()') || lines[i].includes('int main(')) break;
+    result.push(lines[i]);
+  }
+  return result.join('\n').trim();
 }
 
-${userCode}
 
-int main() {
-  ios_base::sync_with_stdio(false);
-  cin.tie(NULL);
-  while (cin >> ws && cin.peek() != EOF) {
-    ${sig.args.map(arg => `${arg.type} ${arg.name}; read(${arg.name});`).join('\n    ')}
-    ${sig.returnType === 'void' ? `${sig.name}(${sig.args.map(a => a.name).join(', ')});` : `auto result = ${sig.name}(${sig.args.map(a => a.name).join(', ')}); cout << result << endl;`}
-    cout << "${DELIMITER}" << endl;
-  }
-  return 0;
+function generateCppWrapper(functionCode) {
+  if (!functionCode) return '';
+  const functionRegex = /([\w\s<>:,*&]+)\s+(\w+)\s*\(([^)]*)\)/;
+  const match = functionCode.match(functionRegex);
+
+  if (!match) return `#include <bits/stdc++.h>\nusing namespace std;\n\n${functionCode}`;
+
+  const returnType = match[1].trim();
+  const functionName = match[2];
+  const argsStr = match[3];
+
+  let wrapper = `#include <bits/stdc++.h>\nusing namespace std;\n${CPP_INPUT_HELPERS}\n${functionCode}\n\nint main() {\n    ios_base::sync_with_stdio(false); cin.tie(NULL);\n    while (cin >> ws && cin.peek() != EOF) {\n`;
+
+  const args = argsStr.split(',').map(s => s.trim()).filter(s => s).map(s => {
+    const parts = s.split(/\s+/);
+    const name = parts[parts.length - 1].replace(/[*&]/g, '');
+    let type = parts.slice(0, -1).join(' ');
+    let cleanType = type.replace(/\bconst\b/g, '').replace(/\bvolatile\b/g, '').replace(/[&]/g, '').trim();
+    return { type, cleanType, name };
+  });
+
+  args.forEach((arg, index) => {
+    wrapper += `        ${arg.cleanType} ${arg.name};\n        read(${arg.name});\n`;
+    if (index === 0 && arg.cleanType.includes('vector')) wrapper += `        if(${arg.name}.empty()) break;\n`;
+  });
+
+  const isVoid = returnType === 'void' || returnType.endsWith(' void');
+  if (isVoid) wrapper += `        ${functionName}(${args.map(a => a.name).join(', ')});\n`;
+  else wrapper += `        cout << ${functionName}(${args.map(a => a.name).join(', ')}) << endl;\n`;
+
+  wrapper += `        cout << "${DELIMITER}" << endl;\n    }\n    return 0;\n}`;
+  return wrapper;
 }
-    `.trim();
-  }
+
+export function getFullCode(userCode, language = 'cpp') {
+  const funcCode = extractFunction(userCode, language);
+  if (language === 'cpp') return generateCppWrapper(funcCode);
+  
 
   if (language === 'c') {
-    return `
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <stdbool.h>
-
-${userCode}
-
-int main() {
-  ${sig.args.map(arg => `${arg.type} ${arg.name};`).join('\n  ')}
-  while (1) {
-    int res = 0;
-    ${sig.args
-      .map((arg, i) => {
-        let format = '';
-        if (arg.type === 'int') format = '%d';
-        else if (arg.type === 'long long') format = '%lld';
-        else if (arg.type === 'float') format = '%f';
-        else if (arg.type === 'double') format = '%lf';
-        else if (arg.type === 'char') format = ' %c';
-        else if (arg.type === 'char*' || arg.type.includes('[')) format = '%s';
-        return `res += scanf("${format}", &${arg.name});`;
-      })
-      .join('\n    ')}
-    if (res < ${sig.args.length}) break;
-    ${sig.returnType === 'void' ? `${sig.name}(${sig.args.map(a => a.name).join(', ')});` : `${sig.returnType} result = ${sig.name}(${sig.args.map(a => a.name).join(', ')});`}
-    ${
-      sig.returnType !== 'void'
-        ? `
-      if (strcmp("${sig.returnType}", "int") == 0) printf("%d\\n", result);
-      else if (strcmp("${sig.returnType}", "long long") == 0) printf("%lld\\n", result);
-      else if (strcmp("${sig.returnType}", "double") == 0) printf("%.6f\\n", result);
-      else if (strcmp("${sig.returnType}", "float") == 0) printf("%f\\n", result);
-    `
-        : ''
-    }
-    printf("${DELIMITER}\\n");
-    fflush(stdout);
+    return `#include <stdio.h>\n#include <stdlib.h>\n#include <string.h>\n#include <stdbool.h>\n\n${userCode}`;
   }
-  return 0;
-}
-    `.trim();
-  }
-
   return userCode;
 }

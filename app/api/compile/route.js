@@ -1,62 +1,68 @@
 import { NextResponse } from 'next/server';
 import { LANGUAGE_MAP } from '@/app/utils/languageMap';
-import { PISTON_CONFIG } from '@/app/utils/constants';
+
+const DEFAULT_HOST = 'ce.judge0.com';
+const JUDGE0_API_HOST = process.env.JUDGE0_API_HOST || DEFAULT_HOST;
+const JUDGE0_API_KEY = process.env.JUDGE0_API_KEY;
 
 export async function POST(req) {
   try {
-    const { source_code, stdin, language } = await req.json();
+    const { code, input, language } = await req.json();
 
     const mapped = LANGUAGE_MAP[language];
-    if (!mapped) {
-      return NextResponse.json({ error: 'Unsupported language' }, { status: 400 });
+    const languageId = mapped ? mapped.judge0Id : 54; 
+
+    const headers = { 'Content-Type': 'application/json' };
+    if (JUDGE0_API_KEY) {
+      if (JUDGE0_API_HOST.includes('rapidapi')) {
+        headers['X-RapidAPI-Key'] = JUDGE0_API_KEY;
+        headers['X-RapidAPI-Host'] = JUDGE0_API_HOST;
+      } else {
+        headers['Authorization'] = `Token ${JUDGE0_API_KEY}`;
+      }
     }
 
-    const PISTON_URL = process.env.PISTON_URL || 'https://emkc.org/api/v2/piston/execute';
+    const JUDGE0_URL = `https://${JUDGE0_API_HOST}/submissions?base64_encoded=false&wait=true`;
 
-    const response = await fetch(PISTON_URL, {
+    const response = await fetch(JUDGE0_URL, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: headers,
       body: JSON.stringify({
-        language: mapped.runtime,
-        version: mapped.version,
-        files: [{ name: mapped.fileName, content: source_code }],
-        stdin: stdin,
-        compile_timeout: PISTON_CONFIG.COMPILE_TIMEOUT,
-        run_timeout: PISTON_CONFIG.RUN_TIMEOUT,
-        compile_memory_limit: PISTON_CONFIG.MEMORY_LIMIT,
-        run_memory_limit: PISTON_CONFIG.MEMORY_LIMIT,
+        source_code: code,
+        language_id: languageId,
+        stdin: input || '',
       }),
     });
 
-    const data = await response.json();
-
-    if (data.compile && data.compile.code !== 0) {
+    if (!response.ok) {
       return NextResponse.json(
-        {
-          type: 'compile_error',
-          message: data.compile.stderr,
-        },
-        { status: 400 }
+        { error: `Executor Error: ${response.status}\nMessage: ${await response.text()}` },
+        { status: response.status }
       );
     }
 
-    if (data.run && data.run.code !== 0) {
-      return NextResponse.json(
-        {
-          type: 'runtime_error',
-          message: data.run.stderr,
-          signal: data.run.signal,
-        },
-        { status: 400 }
-      );
+    const result = await response.json();
+
+
+    if (result.status && result.status.id === 6) {
+      return NextResponse.json({
+        error: `Compilation Error:\n${result.compile_output || 'Unknown compiler error'}`,
+      });
+    }
+
+    if (result.status && ![3, 4].includes(result.status.id)) {
+      let errorMsg = `Runtime Error: ${result.status.description}`;
+      if (result.stderr) errorMsg += `\n${result.stderr}`;
+      if (result.message) errorMsg += `\n${result.message}`;
+      return NextResponse.json({ error: errorMsg });
     }
 
     return NextResponse.json({
-      stdout: data.run.stdout,
-      stderr: data.run.stderr,
-      time: data.run.time || 0,
+      output: result.stdout || '',
+      time: result.time || 0,
     });
   } catch (err) {
-    return NextResponse.json({ error: 'Execution failed' }, { status: 500 });
+    console.error('Execution API error:', err);
+    return NextResponse.json({ error: `Execution failed: ${err.message}` }, { status: 500 });
   }
 }

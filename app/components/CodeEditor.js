@@ -62,10 +62,10 @@ export default function CodeEditor({
       smoothScrolling: true,
 
       lineNumbers: 'on',
-      lineNumbersMinChars: 2,
+      lineNumbersMinChars: 3,
       lineDecorationsWidth: 16,
 
-      padding: { top: 16, bottom: 16 },
+      padding: { top: 12, bottom: 12 },
       roundedSelection: true,
       cursorBlinking: 'smooth',
       cursorSmoothCaretAnimation: 'on',
@@ -76,6 +76,10 @@ export default function CodeEditor({
       renderWhitespace: 'none',
       renderControlCharacters: false,
       renderLineHighlight: 'none',
+
+      tabSize: 4,
+      insertSpaces: true,
+      autoIndent: 'full',
 
       folding: false,
       glyphMargin: false,
@@ -104,7 +108,7 @@ export default function CodeEditor({
       matchBrackets: 'never',
       occurrencesHighlight: 'off',
       selectionHighlight: false,
-      renderIndentGuides: false,
+      renderIndentGuides: true,
     }),
     [fontSize]
   );
