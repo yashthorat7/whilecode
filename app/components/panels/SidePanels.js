@@ -17,8 +17,9 @@ export default function SidePanels({
   addTestCase,
   removeTestCase,
   globalError,
-  onAiRefine,
-  isAiLoading,
+  onAiAction,
+  loadingAction,
+  complexity,
   fontSize,
 }) {
   const [heights, setHeights] = useState(showNotes ? [33.3, 33.3, 33.4] : [0, 50, 50]);
@@ -58,10 +59,7 @@ export default function SidePanels({
   return (
     <div className="relative flex-1 overflow-hidden">
       {isSaveModalOpen && (
-        <div
-          className="absolute inset-0 z-50 flex flex-col"
-          style={{ backgroundColor: 'color-mix(in srgb, var(--bg-page) 60%, transparent)' }}
-        >
+        <div className="modal-overlay">
           <div
             className="flex w-full flex-col"
             style={{ height: showNotes ? `${Math.max(heights[0], 30)}%` : '33.33%' }}
@@ -84,8 +82,8 @@ export default function SidePanels({
               <NotesPanel
                 notes={activeTab?.notes}
                 updateNotes={updateTabNotes}
-                onAiRefine={onAiRefine}
-                isAiLoading={isAiLoading}
+                onAiAction={onAiAction}
+                loadingAction={loadingAction}
                 fontSize={fontSize}
               />
             </div>
@@ -106,6 +104,7 @@ export default function SidePanels({
           <OutputPanel
             testCases={activeTab?.testCases || []}
             globalError={globalError}
+            complexity={complexity}
             fontSize={fontSize}
           />
         </div>

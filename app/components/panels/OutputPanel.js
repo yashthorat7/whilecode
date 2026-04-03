@@ -6,12 +6,12 @@ const STATUS_CLASS = {
   running: 'output-running',
 };
 
-export default function OutputPanel({ testCases, globalError, fontSize = 14 }) {
+export default function OutputPanel({ testCases, globalError, complexity, fontSize = 14 }) {
   return (
     <Panel
       className="flex-1"
       header="OUTPUT"
-      actions={<span style={{ fontSize: 10, color: 'var(--text-muted)' }}>O(n)</span>}
+      actions={<span className="header-badge">{complexity || 'O(?)'}</span>}
     >
       <div className="panel-list select-text">
         {globalError && (

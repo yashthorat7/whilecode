@@ -34,26 +34,44 @@ export default function Page() {
   } = useTabs();
   const { theme, toggleTheme } = useTheme();
   const { run, isRunning, globalError } = useCodeExecution();
-  const { ask, isLoading: isAiLoading } = useAiAssistant();
+  const { ask, loadingAction } = useAiAssistant();
 
   const handleResize = deltaX => {
     const pct = (deltaX / window.innerWidth) * 100;
     setLeftWidth(prev => Math.min(Math.max(prev + pct, 50), 85));
   };
 
-  const handleAiRefine = async () => {
-    if (!activeTab || isAiLoading) return;
-    const result = await ask(activeTab.notes || 'Refine this code.', activeTab);
-    if (result?.code) updateTabCode(result.code);
-    if (result?.notes) updateTabNotes(result.notes);
-    if (result?.testCases && Array.isArray(result.testCases)) {
-      const mappedTestCases = result.testCases.map(tc => ({
+  const handleAiAction = async action => {
+    if (!activeTab || loadingAction) return;
+    const prompts = {
+      search: activeTab.notes || 'Find a coding problem.',
+      solution: 'Write a complete solution based on the notes and test cases.',
+      inspect: 'Inspect the code and test results. Determine complexity and any bugs.',
+      hint: 'Give me soft hints only, do not reveal the answer.',
+    };
+    const result = await ask(prompts[action], activeTab, action);
+    if (!result) return;
+
+    const updates = {};
+    if (result.code) updates.code = result.code;
+    if (result.notes) {
+      updates.notes =
+        action === 'inspect'
+          ? (activeTab.notes || '') + '\n\n---\n🔍 Inspect:\n' + result.notes
+          : result.notes;
+    }
+    if (result.testCases && Array.isArray(result.testCases)) {
+      updates.testCases = result.testCases.map(tc => ({
         id: crypto.randomUUID(),
         input: tc.input || '',
         output: tc.output || '',
         status: 'idle',
       }));
-      updateActiveTab({ testCases: mappedTestCases });
+    }
+    if (result.complexity) updates.complexity = result.complexity;
+
+    if (Object.keys(updates).length > 0) {
+      updateActiveTab(updates);
     }
   };
 
@@ -107,8 +125,9 @@ export default function Page() {
           addTestCase={addTestCase}
           removeTestCase={removeTestCase}
           globalError={globalError}
-          onAiRefine={handleAiRefine}
-          isAiLoading={isAiLoading}
+          onAiAction={handleAiAction}
+          loadingAction={loadingAction}
+          complexity={activeTab?.complexity}
           fontSize={fontSize}
         />
       </div>

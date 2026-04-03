@@ -52,17 +52,8 @@ export default function TabBar({
               ))}
             </SortableContext>
           </div>
-          <div className="ml-1 flex h-full shrink-0 items-center">
-            <button
-              onClick={addTab}
-              disabled={!canAddTab}
-              className="flex h-6 w-6 items-center justify-center rounded transition-colors"
-              style={{
-                color: canAddTab ? 'var(--text-muted)' : 'var(--border-focus)',
-                opacity: canAddTab ? 1 : 0.4,
-                cursor: canAddTab ? 'pointer' : 'not-allowed',
-              }}
-            >
+          <div className="mb-1 ml-0.5 flex h-8 shrink-0 items-end">
+            <button onClick={addTab} disabled={!canAddTab} className="tab-add" title="New Tab">
               <Plus className="h-3.5 w-3.5" strokeWidth={1.5} />
             </button>
           </div>

@@ -77,13 +77,7 @@ export default function SaveModal({ tabs, activeTabId, onClose }) {
             className="icon-btn disabled:opacity-40"
           >
             {downloading ? (
-              <div
-                className="h-3.5 w-3.5 animate-spin rounded-full"
-                style={{
-                  border: '2px solid var(--border-focus)',
-                  borderTopColor: 'var(--text-primary)',
-                }}
-              />
+              <div className="spinner" />
             ) : (
               <Download className="h-3.5 w-3.5" strokeWidth={1.5} />
             )}
@@ -100,12 +94,7 @@ export default function SaveModal({ tabs, activeTabId, onClose }) {
                 <div className={`export-check${isSelected ? ' selected' : ''}`}>
                   {isSelected && <Check className="h-2.5 w-2.5" strokeWidth={4} />}
                 </div>
-                <span
-                  className="truncate font-mono text-xs"
-                  style={{ color: isSelected ? 'var(--text-primary)' : 'var(--text-muted)' }}
-                >
-                  {tab.name}
-                </span>
+                <span className={`export-name${isSelected ? ' selected' : ''}`}>{tab.name}</span>
               </div>
               <button
                 onClick={e => {

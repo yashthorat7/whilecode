@@ -51,7 +51,7 @@ export default function CodeEditor({
     () => ({
       fontSize,
       fontFamily: "'Fira Code', monospace",
-      fontLigatures: true,
+      fontLigatures: false,
       minimap: { enabled: false },
       automaticLayout: true,
       scrollBeyondLastLine: false,

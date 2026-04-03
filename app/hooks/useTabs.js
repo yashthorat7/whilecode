@@ -46,6 +46,7 @@ export function useTabs() {
     language: 'cpp',
     code: DEFAULT_CODE_CPP,
     notes: '',
+    complexity: '',
     testCases: [{ id: crypto.randomUUID(), input: '', output: '', status: 'idle' }],
     createdAt: Date.now(),
   });
@@ -55,6 +56,7 @@ export function useTabs() {
     id: tab.id || crypto.randomUUID(),
     language: tab.language || 'cpp',
     notes: tab.notes ?? '',
+    complexity: tab.complexity ?? '',
     testCases: (tab.testCases || []).map(tc => ({
       ...tc,
       id: tc.id || crypto.randomUUID(),
