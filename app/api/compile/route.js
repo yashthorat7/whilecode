@@ -10,7 +10,7 @@ export async function POST(req) {
     const { code, input, language } = await req.json();
 
     const mapped = LANGUAGE_MAP[language];
-    const languageId = mapped ? mapped.judge0Id : 54; 
+    const languageId = mapped ? mapped.judge0Id : 54;
 
     const headers = { 'Content-Type': 'application/json' };
     if (JUDGE0_API_KEY) {
@@ -22,15 +22,15 @@ export async function POST(req) {
       }
     }
 
-    const JUDGE0_URL = `https://${JUDGE0_API_HOST}/submissions?base64_encoded=false&wait=true`;
+    const JUDGE0_URL = `https://${JUDGE0_API_HOST}/submissions?base64_encoded=true&wait=true`;
 
     const response = await fetch(JUDGE0_URL, {
       method: 'POST',
       headers: headers,
       body: JSON.stringify({
-        source_code: code,
+        source_code: Buffer.from(code || '').toString('base64'),
         language_id: languageId,
-        stdin: input || '',
+        stdin: Buffer.from(input || '').toString('base64'),
       }),
     });
 
@@ -43,22 +43,30 @@ export async function POST(req) {
 
     const result = await response.json();
 
+    const decodeBase64 = str => {
+      if (!str) return str;
+      try {
+        return Buffer.from(str, 'base64').toString('utf-8');
+      } catch (e) {
+        return str;
+      }
+    };
 
     if (result.status && result.status.id === 6) {
       return NextResponse.json({
-        error: `Compilation Error:\n${result.compile_output || 'Unknown compiler error'}`,
+        error: `Compilation Error:\n${decodeBase64(result.compile_output) || 'Unknown compiler error'}`,
       });
     }
 
     if (result.status && ![3, 4].includes(result.status.id)) {
       let errorMsg = `Runtime Error: ${result.status.description}`;
-      if (result.stderr) errorMsg += `\n${result.stderr}`;
-      if (result.message) errorMsg += `\n${result.message}`;
+      if (result.stderr) errorMsg += `\n${decodeBase64(result.stderr)}`;
+      if (result.message) errorMsg += `\n${decodeBase64(result.message)}`;
       return NextResponse.json({ error: errorMsg });
     }
 
     return NextResponse.json({
-      output: result.stdout || '',
+      output: decodeBase64(result.stdout) || '',
       time: result.time || 0,
     });
   } catch (err) {

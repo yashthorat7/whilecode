@@ -1,34 +1,35 @@
 import Panel from '../ui/Panel';
 
-export default function OutputPanel({ testCases, globalError }) {
+const STATUS_CLASS = {
+  success: 'output-success',
+  error: 'output-error',
+  running: 'output-running',
+};
+
+export default function OutputPanel({ testCases, globalError, fontSize = 14 }) {
   return (
     <Panel
-      className="flex-1 overflow-hidden"
+      className="flex-1"
       header="OUTPUT"
-      actions={<span className="font-mono text-[10px] text-gray-500">O(n)</span>}
+      actions={<span style={{ fontSize: 10, color: 'var(--text-muted)' }}>O(n)</span>}
     >
-      <div className="h-full divide-y divide-gray-700 overflow-y-auto select-none">
+      <div className="panel-list select-text">
         {globalError && (
-          <div className="px-3 py-4">
-            <div className="font-mono text-[13px] text-rose-500">
-              <span className="font-bold uppercase">Error:</span> {globalError}
-            </div>
+          <div
+            className="px-2 py-3"
+            style={{ fontSize, color: 'var(--c-error)', fontFamily: 'inherit' }}
+          >
+            <span style={{ fontWeight: 700 }}>Error: </span>
+            {globalError}
           </div>
         )}
-        {testCases.map((tc, index) => (
-          <div key={tc.id} className="flex min-h-[32px] items-center px-2 py-4">
+        {testCases.map(tc => (
+          <div key={tc.id} className="flex min-h-[32px] items-start px-2 py-3">
             <div
-              className={`w-full font-mono text-[14px] whitespace-pre-wrap ${
-                tc.status === 'success'
-                  ? 'text-emerald-500/80'
-                  : tc.status === 'error'
-                    ? 'text-rose-500/80'
-                    : tc.status === 'running'
-                      ? 'text-gray-500 animate-pulse'
-                      : 'text-gray-700'
-              }`}
+              style={{ fontSize }}
+              className={`w-full font-mono whitespace-pre-wrap ${STATUS_CLASS[tc.status] || 'output-idle'}`}
             >
-              {tc.output || (tc.status === 'running' ? '...' : '')}
+              {tc.output || '...'}
             </div>
           </div>
         ))}
@@ -36,4 +37,3 @@ export default function OutputPanel({ testCases, globalError }) {
     </Panel>
   );
 }
-

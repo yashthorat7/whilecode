@@ -40,8 +40,6 @@ export function useTabs() {
     return `Solution ${nextNum}`;
   };
 
-
-
   const createDefaultTab = (name = 'Solution 1') => ({
     id: crypto.randomUUID(),
     name,
@@ -105,8 +103,6 @@ export function useTabs() {
     setTabs(nextTabs);
     setActiveTabId(newTab.id);
   };
-
-
 
   const removeTab = id => {
     let nextTabs = tabs.filter(t => t.id !== id);

@@ -5,22 +5,17 @@ export default function ResizeHandle({ orientation = 'vertical', onResize, class
 
   useEffect(() => {
     if (!isDragging) return;
-
-    const handleMouseMove = e => {
-      onResize?.(orientation === 'vertical' ? e.movementX : e.movementY);
-    };
-
-    const handleMouseUp = () => {
+    const onMove = e => onResize?.(orientation === 'vertical' ? e.movementX : e.movementY);
+    const onUp = () => {
       setIsDragging(false);
       document.body.style.cursor = '';
       document.body.style.pointerEvents = '';
     };
-
-    window.addEventListener('mousemove', handleMouseMove);
-    window.addEventListener('mouseup', handleMouseUp);
+    window.addEventListener('mousemove', onMove);
+    window.addEventListener('mouseup', onUp);
     return () => {
-      window.removeEventListener('mousemove', handleMouseMove);
-      window.removeEventListener('mouseup', handleMouseUp);
+      window.removeEventListener('mousemove', onMove);
+      window.removeEventListener('mouseup', onUp);
     };
   }, [isDragging, orientation, onResize]);
 
@@ -31,12 +26,10 @@ export default function ResizeHandle({ orientation = 'vertical', onResize, class
     document.body.style.pointerEvents = 'none';
   };
 
-  const cls =
-    orientation === 'vertical'
-      ? 'w-2 cursor-ew-resize self-stretch relative z-50'
-      : 'h-2 cursor-ns-resize self-stretch w-full relative z-50';
-
   return (
-    <div onMouseDown={handleMouseDown} className={`shrink-0 bg-transparent ${cls} ${className}`} />
+    <div
+      onMouseDown={handleMouseDown}
+      className={`${orientation === 'vertical' ? 'resize-handle-v' : 'resize-handle-h'} ${className}`}
+    />
   );
 }

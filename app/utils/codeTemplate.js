@@ -3,123 +3,236 @@ import { DELIMITER } from './constants';
 const CPP_INPUT_HELPERS = `
 template<typename T> ostream& operator<<(ostream& os, const vector<T>& v) {
     os << "[";
-    for(size_t i=0; i<v.size(); ++i) { if(i) os << ", "; os << v[i]; }
+    for (size_t i = 0; i < v.size(); ++i) { if (i) os << ", "; os << v[i]; }
     os << "]";
     return os;
 }
 template<typename T1, typename T2> ostream& operator<<(ostream& os, const pair<T1,T2>& p) {
-    os << "(" << p.first << ", " << p.second << ")";
-    return os;
+    return os << "(" << p.first << ", " << p.second << ")";
 }
 
-template<typename T> void read(T& x) { cin >> x; }
-void read(string& x) { cin >> x; }
-template<typename T1, typename T2> void read(pair<T1, T2>& p) {
+template<typename T> void read(T& x) {
+    while (cin && (isspace(cin.peek()) || cin.peek() == ',')) cin.ignore();
+    cin >> x;
+}
+void read(string& x) {
+    while (cin && (isspace(cin.peek()) || cin.peek() == ',')) cin.ignore();
+    if (cin.peek() == '"') {
+        cin.ignore(); getline(cin, x, '"');
+    } else { cin >> x; }
+}
+template<typename T1, typename T2> void read(pair<T1,T2>& p) {
     char c;
-    while(cin && isspace(cin.peek())) cin.ignore();
-    if(cin.peek() == '(') {
-        cin >> c;
-        read(p.first);
-        while(cin && (isspace(cin.peek()) || cin.peek() == ',')) cin.ignore();
+    while (cin && isspace(cin.peek())) cin.ignore();
+    if (cin.peek() == '(') {
+        cin >> c; read(p.first);
+        while (cin && (isspace(cin.peek()) || cin.peek() == ',')) cin.ignore();
         read(p.second);
-        while(cin && (isspace(cin.peek()) || cin.peek() == ')')) cin.ignore();
-    } else {
-        read(p.first);
-        read(p.second);
-    }
+        while (cin && (isspace(cin.peek()) || cin.peek() == ')')) cin.ignore();
+    } else { read(p.first); read(p.second); }
 }
 template<typename T> void read(vector<T>& v) {
-    while(cin && isspace(cin.peek())) cin.ignore();
-    if(cin.peek() == '[') {
+    while (cin && isspace(cin.peek())) cin.ignore();
+    if (cin.peek() == '[') {
         char c; cin >> c;
-        while(cin) {
-            while(cin && (isspace(cin.peek()) || cin.peek() == ',')) cin.ignore();
-            if(cin.peek() == ']') { cin.ignore(); break; }
-            if(cin.peek() == EOF) break;
-            T x; if(cin >> x) v.push_back(x);
-            else break;
+        while (cin) {
+            while (cin && (isspace(cin.peek()) || cin.peek() == ',')) cin.ignore();
+            if (cin.peek() == ']') { cin.ignore(); break; }
+            if (cin.peek() == EOF) break;
+            T x; if (cin >> x) v.push_back(x); else break;
         }
     } else {
         string line;
-        if(getline(cin, line)) {
+        if (getline(cin, line)) {
             istringstream iss(line);
             T x;
-            while(iss >> x) v.push_back(x);
+            while (iss >> x) v.push_back(x);
         }
     }
 }
 `;
 
+const CPP_LEETCODE_STRUCTS = `
+struct ListNode {
+    int val;
+    ListNode *next;
+    ListNode() : val(0), next(nullptr) {}
+    ListNode(int x) : val(x), next(nullptr) {}
+    ListNode(int x, ListNode *next) : val(x), next(next) {}
+};
+struct TreeNode {
+    int val;
+    TreeNode *left;
+    TreeNode *right;
+    TreeNode() : val(0), left(nullptr), right(nullptr) {}
+    TreeNode(int x) : val(x), left(nullptr), right(nullptr) {}
+    TreeNode(int x, TreeNode *left, TreeNode *right) : val(x), left(left), right(right) {}
+};
 
-export function extractFunction(fullCode, language = 'cpp') {
+void read(ListNode*& head) {
+    vector<int> v;
+    read(v);
+    if(v.empty()) { head = nullptr; return; }
+    head = new ListNode(v[0]);
+    ListNode* curr = head;
+    for(size_t i=1; i<v.size(); ++i) { curr->next = new ListNode(v[i]); curr = curr->next; }
+}
+
+void read(TreeNode*& root) {
+    while(cin && isspace(cin.peek())) cin.ignore();
+    if (cin.peek() == '[') {
+        char c; cin >> c;
+        vector<string> v;
+        while(cin) {
+            while (cin && (isspace(cin.peek()) || cin.peek() == ',')) cin.ignore();
+            if (cin.peek() == ']') { cin.ignore(); break; }
+            if (cin.peek() == EOF) break;
+            string s;
+            while(cin && cin.peek() != ',' && cin.peek() != ']' && !isspace(cin.peek())) {
+                s += cin.get();
+            }
+            if (!s.empty()) v.push_back(s);
+        }
+        if (v.empty()) { root = nullptr; return; }
+        if (v[0] == "null") { root = nullptr; return; }
+        root = new TreeNode(stoi(v[0]));
+        queue<TreeNode*> q;
+        q.push(root);
+        size_t i = 1;
+        while(!q.empty() && i < v.size()) {
+            TreeNode* curr = q.front(); q.pop();
+            if (i < v.size() && v[i] != "null") {
+                curr->left = new TreeNode(stoi(v[i]));
+                q.push(curr->left);
+            }
+            i++;
+            if (i < v.size() && v[i] != "null") {
+                curr->right = new TreeNode(stoi(v[i]));
+                q.push(curr->right);
+            }
+            i++;
+        }
+    } else {
+        root = nullptr;
+    }
+}
+
+ostream& operator<<(ostream& os, ListNode* head) {
+    os << "[";
+    while(head) { os << head->val; if (head->next) os << ","; head = head->next; }
+    os << "]"; return os;
+}
+
+ostream& operator<<(ostream& os, TreeNode* root) {
+    if (!root) return os << "[]";
+    os << "[";
+    queue<TreeNode*> q;
+    q.push(root);
+    vector<string> res;
+    while(!q.empty()) {
+        TreeNode* curr = q.front(); q.pop();
+        if (curr) {
+            res.push_back(to_string(curr->val));
+            q.push(curr->left);
+            q.push(curr->right);
+        } else {
+            res.push_back("null");
+        }
+    }
+    while(!res.empty() && res.back() == "null") res.pop_back();
+    for(size_t i=0; i<res.size(); ++i) {
+        if(i) os << ",";
+        os << res[i];
+    }
+    os << "]";
+    return os;
+}
+`;
+
+function extractFunction(fullCode) {
   if (!fullCode) return '';
-  let lines = fullCode.split('\n');
+  const lines = fullCode.split('\n');
+  const funcRegex = /^[a-zA-Z0-9_<>:,\s*&]+[ \t]+[a-zA-Z0-9_]+[ \t]*\([^{]*\)[ \t]*{/;
   let functionStart = -1;
   let inTemplate = false;
 
-  const funcRegex = /^[a-zA-Z0-9_<>:,\s*&]+[ \t]+[a-zA-Z0-9_]+[ \t]*\([^{]*\)[ \t]*{/;
-
   for (let i = 0; i < lines.length; i++) {
-    let line = lines[i].trim();
-    if (!line || line.startsWith('#include') || line.startsWith('using namespace') || (line.startsWith('//') && i < 10)) continue;
-    if (line.startsWith('template<')) { inTemplate = true; continue; }
-    if (inTemplate) { if (line.includes('}')) inTemplate = false; continue; }
+    const line = lines[i].trim();
+    if (
+      !line ||
+      line.startsWith('#include') ||
+      line.startsWith('using namespace') ||
+      (line.startsWith('//') && i < 10)
+    )
+      continue;
+    if (line.startsWith('template<')) {
+      inTemplate = true;
+      continue;
+    }
+    if (inTemplate) {
+      if (line.includes('}')) inTemplate = false;
+      continue;
+    }
     if (line.includes('operator<<') || line.includes('void read(')) continue;
     if (funcRegex.test(line) && !line.includes('int main')) functionStart = i;
   }
 
   if (functionStart === -1) return fullCode;
 
-  let result = [];
+  const result = [];
   for (let i = functionStart; i < lines.length; i++) {
-    if (lines[i].includes('int main()') || lines[i].includes('int main(')) break;
+    if (lines[i].includes('int main')) break;
     result.push(lines[i]);
   }
   return result.join('\n').trim();
 }
 
-
 function generateCppWrapper(functionCode) {
   if (!functionCode) return '';
-  const functionRegex = /([\w\s<>:,*&]+)\s+(\w+)\s*\(([^)]*)\)/;
-  const match = functionCode.match(functionRegex);
-
+  const match = functionCode.match(/([\w\s<>:,*&]+)\s+(\w+)\s*\(([^)]*)\)/);
   if (!match) return `#include <bits/stdc++.h>\nusing namespace std;\n\n${functionCode}`;
 
   const returnType = match[1].trim();
   const functionName = match[2];
-  const argsStr = match[3];
+  const args = match[3]
+    .split(',')
+    .map(s => s.trim())
+    .filter(Boolean)
+    .map(s => {
+      const parts = s.split(/\s+/);
+      const name = parts[parts.length - 1].replace(/[*&]/g, '');
+      const cleanType = parts
+        .slice(0, -1)
+        .join(' ')
+        .replace(/\bconst\b/g, '')
+        .replace(/[&]/g, '')
+        .trim();
+      return { cleanType, name };
+    });
 
-  let wrapper = `#include <bits/stdc++.h>\nusing namespace std;\n${CPP_INPUT_HELPERS}\n${functionCode}\n\nint main() {\n    ios_base::sync_with_stdio(false); cin.tie(NULL);\n    while (cin >> ws && cin.peek() != EOF) {\n`;
+  let wrapper = `#include <bits/stdc++.h>\nusing namespace std;\n${CPP_INPUT_HELPERS}\n${CPP_LEETCODE_STRUCTS}\n${functionCode}\n\nint main() {\n    ios_base::sync_with_stdio(false); cin.tie(NULL); cout << boolalpha;\n    while (cin >> ws && cin.peek() != EOF) {\n`;
 
-  const args = argsStr.split(',').map(s => s.trim()).filter(s => s).map(s => {
-    const parts = s.split(/\s+/);
-    const name = parts[parts.length - 1].replace(/[*&]/g, '');
-    let type = parts.slice(0, -1).join(' ');
-    let cleanType = type.replace(/\bconst\b/g, '').replace(/\bvolatile\b/g, '').replace(/[&]/g, '').trim();
-    return { type, cleanType, name };
-  });
-
-  args.forEach((arg, index) => {
+  args.forEach((arg, i) => {
     wrapper += `        ${arg.cleanType} ${arg.name};\n        read(${arg.name});\n`;
-    if (index === 0 && arg.cleanType.includes('vector')) wrapper += `        if(${arg.name}.empty()) break;\n`;
+    if (i === 0 && arg.cleanType.includes('vector'))
+      wrapper += `        if (${arg.name}.empty()) break;\n`;
   });
 
   const isVoid = returnType === 'void' || returnType.endsWith(' void');
-  if (isVoid) wrapper += `        ${functionName}(${args.map(a => a.name).join(', ')});\n`;
-  else wrapper += `        cout << ${functionName}(${args.map(a => a.name).join(', ')}) << endl;\n`;
+  wrapper += isVoid
+    ? `        ${functionName}(${args.map(a => a.name).join(', ')});\n`
+    : `        cout << ${functionName}(${args.map(a => a.name).join(', ')}) << endl;\n`;
 
   wrapper += `        cout << "${DELIMITER}" << endl;\n    }\n    return 0;\n}`;
   return wrapper;
 }
 
-export function getFullCode(userCode, language = 'cpp') {
-  const funcCode = extractFunction(userCode, language);
-  if (language === 'cpp') return generateCppWrapper(funcCode);
-  
+function generateCWrapper(userCode) {
+  return `#include <stdio.h>\n#include <stdlib.h>\n#include <string.h>\n#include <stdbool.h>\n\n${userCode}\n\nint main() {\n    return 0;\n}`;
+}
 
-  if (language === 'c') {
-    return `#include <stdio.h>\n#include <stdlib.h>\n#include <string.h>\n#include <stdbool.h>\n\n${userCode}`;
-  }
+export function getFullCode(userCode, language = 'cpp') {
+  if (language === 'cpp') return generateCppWrapper(extractFunction(userCode));
+  if (language === 'c') return generateCWrapper(userCode);
   return userCode;
 }

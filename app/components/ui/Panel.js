@@ -9,7 +9,7 @@ export default function Panel({ children, className = '', header, actions }) {
       ) : (
         actions && <div className="panel-actions absolute top-2 right-2 z-30">{actions}</div>
       )}
-      <div className="min-h-0 flex-1">{children}</div>
+      <div className="flex min-h-0 flex-1 flex-col overflow-hidden">{children}</div>
     </div>
   );
 }

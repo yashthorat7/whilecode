@@ -1,13 +1,14 @@
 export const DELIMITER = '---CASE_DELIMITER---';
 
-export const DEFAULT_CODE_CPP = `int add(int a, int b) {
-    return a + b;
+export const DEFAULT_CODE_CPP = `// Recursive Factorial
+long long factorial(int n) {
+    if (n <= 1) return 1;
+    return n * factorial(n - 1);
 }`;
 
-
-export const DEFAULT_CODE_C = `// solution name
-int solve() {
-    return 0;
+export const DEFAULT_CODE_C = `// Add Two Numbers
+int add(int a, int b) {
+    return a + b;
 }`;
 
 export const STORAGE_KEYS = {

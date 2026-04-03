@@ -1,6 +1,5 @@
 import { Plus } from 'lucide-react';
 import Tab from '../ui/Tab';
-import { useTabs } from '../../hooks/useTabs';
 import {
   DndContext,
   closestCenter,
@@ -21,21 +20,13 @@ export default function TabBar({
   reorderTabs,
   canAddTab,
 }) {
-
   const sensors = useSensors(
-    useSensor(PointerSensor, {
-      activationConstraint: {
-        distance: 8,
-      },
-    }),
+    useSensor(PointerSensor, { activationConstraint: { distance: 8 } }),
     useSensor(KeyboardSensor)
   );
 
-  const handleDragEnd = event => {
-    const { active, over } = event;
-    if (over && active.id !== over.id) {
-      reorderTabs(active.id, over.id);
-    }
+  const handleDragEnd = ({ active, over }) => {
+    if (over && active.id !== over.id) reorderTabs(active.id, over.id);
   };
 
   return (
@@ -65,11 +56,12 @@ export default function TabBar({
             <button
               onClick={addTab}
               disabled={!canAddTab}
-              className={`flex h-6 w-6 items-center justify-center rounded transition-colors ${
-                canAddTab
-                  ? 'text-gray-500 hover:text-gray-300'
-                  : 'cursor-not-allowed text-gray-700 opacity-50'
-              }`}
+              className="flex h-6 w-6 items-center justify-center rounded transition-colors"
+              style={{
+                color: canAddTab ? 'var(--text-muted)' : 'var(--border-focus)',
+                opacity: canAddTab ? 1 : 0.4,
+                cursor: canAddTab ? 'pointer' : 'not-allowed',
+              }}
             >
               <Plus className="h-3.5 w-3.5" strokeWidth={1.5} />
             </button>

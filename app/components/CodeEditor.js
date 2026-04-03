@@ -5,12 +5,12 @@ import { useMemo, useCallback } from 'react';
 
 export default function CodeEditor({
   value,
-  language = 'javascript',
+  language = 'cpp',
   theme = 'dark',
   fontSize = 14,
   onChange,
 }) {
-  const handleBeforeMount = useCallback((monaco) => {
+  const handleBeforeMount = useCallback(monaco => {
     monaco.editor.defineTheme('cp-dark', {
       base: 'vs-dark',
       inherit: true,
@@ -28,7 +28,6 @@ export default function CodeEditor({
         'editorIndentGuide.activeBackground1': '#4b5563',
       },
     });
-
     monaco.editor.defineTheme('cp-light', {
       base: 'vs',
       inherit: true,
@@ -48,44 +47,34 @@ export default function CodeEditor({
     });
   }, []);
 
-  const editorTheme = theme === 'dark' ? 'cp-dark' : 'cp-light';
-
   const options = useMemo(
     () => ({
       fontSize,
       fontFamily: "'Fira Code', monospace",
       fontLigatures: true,
-
       minimap: { enabled: false },
       automaticLayout: true,
       scrollBeyondLastLine: false,
       smoothScrolling: true,
-
       lineNumbers: 'on',
       lineNumbersMinChars: 3,
       lineDecorationsWidth: 16,
-
       padding: { top: 12, bottom: 12 },
       roundedSelection: true,
       cursorBlinking: 'smooth',
       cursorSmoothCaretAnimation: 'on',
       cursorStyle: 'line',
       cursorWidth: 2,
-
       wordWrap: 'on',
       renderWhitespace: 'none',
       renderControlCharacters: false,
       renderLineHighlight: 'none',
-
       tabSize: 4,
       insertSpaces: true,
       autoIndent: 'full',
-
       folding: false,
       glyphMargin: false,
-      lineHighlightOnlyWhenFocus: false,
       overviewRulerBorder: false,
-
       scrollbar: {
         vertical: 'hidden',
         horizontal: 'hidden',
@@ -93,10 +82,8 @@ export default function CodeEditor({
         horizontalScrollbarSize: 0,
         useShadows: false,
       },
-
       overviewRulerLanes: 0,
       hideCursorInOverviewRuler: true,
-
       quickSuggestions: false,
       suggestOnTriggerCharacters: false,
       parameterHints: { enabled: false },
@@ -104,7 +91,6 @@ export default function CodeEditor({
       lightbulb: { enabled: false },
       codeLens: false,
       contextmenu: false,
-
       matchBrackets: 'never',
       occurrencesHighlight: 'off',
       selectionHighlight: false,
@@ -114,13 +100,13 @@ export default function CodeEditor({
   );
 
   return (
-    <div className="h-full w-full overflow-hidden rounded-2xl bg-[#1f2937] shadow-sm">
+    <div className="editor-wrap">
       <Editor
         height="100%"
         width="100%"
         language={language}
         value={value}
-        theme={editorTheme}
+        theme={theme === 'dark' ? 'cp-dark' : 'cp-light'}
         beforeMount={handleBeforeMount}
         onChange={onChange}
         options={options}

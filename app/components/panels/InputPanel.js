@@ -1,9 +1,22 @@
 import { Plus, X } from 'lucide-react';
 import Panel from '../ui/Panel';
-export default function InputPanel({ testCases, addTestCase, removeTestCase, updateTestCase }) {
+
+const autoHeight = el => {
+  if (!el) return;
+  el.style.height = 'auto';
+  el.style.height = el.scrollHeight + 'px';
+};
+
+export default function InputPanel({
+  testCases,
+  addTestCase,
+  removeTestCase,
+  updateTestCase,
+  fontSize = 14,
+}) {
   return (
     <Panel
-      className="flex-1 overflow-hidden"
+      className="flex-1"
       header="INPUT"
       actions={
         <button className="icon-btn" onClick={addTestCase}>
@@ -11,35 +24,26 @@ export default function InputPanel({ testCases, addTestCase, removeTestCase, upd
         </button>
       }
     >
-      <div className="h-full divide-y divide-gray-700 overflow-y-auto select-none">
-        {testCases.map((tc, i) => (
-          <div key={tc.id} className="group relative flex min-h-[32px] items-center px-2 py-4">
+      <div className="panel-list">
+        {testCases.map(tc => (
+          <div key={tc.id} className="group relative flex min-h-[32px] items-start px-2 py-3">
             <textarea
-              className="w-full resize-none overflow-hidden bg-transparent font-mono text-[14px] whitespace-pre-wrap text-gray-300 outline-none placeholder:text-gray-700"
+              style={{ fontSize, color: 'var(--text-primary)' }}
+              className="w-full resize-none bg-transparent font-mono whitespace-pre-wrap outline-none"
               placeholder="..."
               value={tc.input}
-              onChange={e => {
-                updateTestCase(tc.id, { input: e.target.value });
-              }}
-              onInput={e => {
-                e.target.style.height = 'auto';
-                e.target.style.height = e.target.scrollHeight + 'px';
-              }}
-              ref={el => {
-                if (el) {
-                  el.style.height = 'auto';
-                  el.style.height = el.scrollHeight + 'px';
-                }
-              }}
+              onChange={e => updateTestCase(tc.id, { input: e.target.value })}
+              onInput={e => autoHeight(e.target)}
+              ref={autoHeight}
               spellCheck={false}
               rows={1}
             />
             {testCases.length > 1 && (
               <button
                 onClick={() => removeTestCase(tc.id)}
-                className="absolute top-1/2 right-1.5 -translate-y-1/2 p-1 text-gray-600 opacity-0 transition-opacity group-hover:opacity-100 hover:text-gray-400"
+                className="icon-btn mt-0.5 ml-1 shrink-0 opacity-0 group-hover:opacity-100"
               >
-                <X className="h-4 w-4" strokeWidth={1.5} />
+                <X className="h-3.5 w-3.5" strokeWidth={1.5} />
               </button>
             )}
           </div>
@@ -48,4 +52,3 @@ export default function InputPanel({ testCases, addTestCase, removeTestCase, upd
     </Panel>
   );
 }
-

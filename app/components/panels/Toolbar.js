@@ -12,47 +12,40 @@ export default function Toolbar({
   theme,
   toggleTheme,
 }) {
-  const dec = () => setFontSize(s => Math.max(10, s - 1));
-  const inc = () => setFontSize(s => Math.min(30, s + 1));
-
-
   return (
     <div className="mb-2 flex h-7 items-center justify-end gap-2">
       <SegmentedButton>
         <button
           onClick={() => setShowNotes(!showNotes)}
-          className={`seg-cell ${showNotes ? 'text-gray-300' : 'text-gray-500'}`}
+          className="seg-cell"
+          style={showNotes ? { color: 'var(--text-primary)' } : undefined}
         >
           <FileText className="h-3.5 w-3.5" strokeWidth={1.5} />
         </button>
         <button
           onClick={onDownload}
-          className={`seg-cell ${isSaveModalOpen ? 'text-gray-200' : 'text-gray-500'}`}
+          className="seg-cell"
+          style={isSaveModalOpen ? { color: 'var(--text-primary)' } : undefined}
         >
           <Download className="h-3.5 w-3.5" strokeWidth={1.5} />
         </button>
         <div className="seg-cell group relative select-none">
-          <span className="z-0 text-xs text-gray-500 transition-colors group-hover:text-gray-300">
+          <span className="z-0 text-xs transition-colors" style={{ color: 'var(--text-muted)' }}>
             {fontSize}
           </span>
           <div className="absolute inset-0 flex">
-            <button className="flex-1" onClick={dec} />
-            <button className="flex-1" onClick={inc} />
+            <button className="flex-1" onClick={() => setFontSize(s => Math.max(10, s - 1))} />
+            <button className="flex-1" onClick={() => setFontSize(s => Math.min(30, s + 1))} />
           </div>
         </div>
-        <button
-          onClick={toggleTheme}
-          className="seg-cell text-gray-500 hover:text-gray-300 transition-colors"
-        >
+        <button onClick={toggleTheme} className="seg-cell">
           {theme === 'dark' ? (
-            <Sun className="h-3.5 w-3.5" strokeWidth={1.5} />
-          ) : (
             <Moon className="h-3.5 w-3.5" strokeWidth={1.5} />
+          ) : (
+            <Sun className="h-3.5 w-3.5" strokeWidth={1.5} />
           )}
         </button>
       </SegmentedButton>
-
-
 
       <Button href="https://github.com/yashthorat7" target="_blank" rel="noopener noreferrer">
         <svg

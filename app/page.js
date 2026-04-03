@@ -30,31 +30,35 @@ export default function Page() {
     updateTestCase,
     addTestCase,
     removeTestCase,
+    updateActiveTab,
   } = useTabs();
   const { theme, toggleTheme } = useTheme();
   const { run, isRunning, globalError } = useCodeExecution();
   const { ask, isLoading: isAiLoading } = useAiAssistant();
 
   const handleResize = deltaX => {
-    const totalWidth = window.innerWidth;
-    const deltaPercent = (deltaX / totalWidth) * 100;
-    setLeftWidth(prev => Math.min(Math.max(prev + deltaPercent, 50), 85));
-  };
-
-  const handleRun = tab => {
-    run(tab, updateTestCase);
+    const pct = (deltaX / window.innerWidth) * 100;
+    setLeftWidth(prev => Math.min(Math.max(prev + pct, 50), 85));
   };
 
   const handleAiRefine = async () => {
     if (!activeTab || isAiLoading) return;
     const result = await ask(activeTab.notes || 'Refine this code.', activeTab);
-    if (result && result.code) {
-      updateTabCode(result.code);
+    if (result?.code) updateTabCode(result.code);
+    if (result?.notes) updateTabNotes(result.notes);
+    if (result?.testCases && Array.isArray(result.testCases)) {
+      const mappedTestCases = result.testCases.map(tc => ({
+        id: crypto.randomUUID(),
+        input: tc.input || '',
+        output: tc.output || '',
+        status: 'idle',
+      }));
+      updateActiveTab({ testCases: mappedTestCases });
     }
   };
 
   return (
-    <main className="flex min-h-screen flex-col bg-gray-900 p-2 md:flex-row">
+    <main className="flex min-h-screen flex-col p-2 md:flex-row">
       <div
         style={{ flexBasis: `${leftWidth}%` }}
         className="flex h-[60vh] w-full min-w-0 flex-col md:h-auto"
@@ -73,24 +77,24 @@ export default function Page() {
           updateTabCode={updateTabCode}
           fontSize={fontSize}
           theme={theme}
-          onRun={handleRun}
+          onRun={tab => run(tab, updateTestCase)}
           isRunning={isRunning}
         />
       </div>
 
       <ResizeHandle orientation="vertical" onResize={handleResize} className="hidden md:block" />
+
       <div className="flex min-w-[155px] flex-1 flex-col">
         <Toolbar
           fontSize={fontSize}
           setFontSize={setFontSize}
           showNotes={showNotes}
           setShowNotes={setShowNotes}
-          onDownload={() => setIsSaveModalOpen(prev => !prev)}
+          onDownload={() => setIsSaveModalOpen(p => !p)}
           isSaveModalOpen={isSaveModalOpen}
           theme={theme}
           toggleTheme={toggleTheme}
         />
-
         <SidePanels
           showNotes={showNotes}
           isSaveModalOpen={isSaveModalOpen}
@@ -105,9 +109,9 @@ export default function Page() {
           globalError={globalError}
           onAiRefine={handleAiRefine}
           isAiLoading={isAiLoading}
+          fontSize={fontSize}
         />
       </div>
     </main>
-
   );
 }
