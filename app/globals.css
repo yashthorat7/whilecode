@@ -76,30 +76,30 @@
   }
 
   .seg-btn {
-    @apply flex h-7 shrink-0 overflow-hidden rounded-xl border border-[#333338] bg-[#202023];
+    @apply flex h-7 shrink-0 overflow-hidden rounded-full border border-zinc-800 bg-[#202023]/80;
   }
   [data-theme='light'] .seg-btn {
-    @apply border-zinc-300 bg-white;
+    @apply border-zinc-300 bg-white/80;
   }
   .seg-btn > * + * {
-    @apply border-l border-[#333338];
+    @apply border-l border-zinc-800;
   }
   [data-theme='light'] .seg-btn > * + * {
     @apply border-zinc-300;
   }
 
   .seg-cell {
-    @apply flex h-full min-w-7 items-center justify-center text-zinc-500 transition-colors duration-150 hover:bg-zinc-700 hover:text-zinc-200;
+    @apply flex h-full min-w-8 items-center justify-center text-zinc-500 transition-colors duration-150 hover:bg-zinc-800 hover:text-zinc-200;
   }
   [data-theme='light'] .seg-cell {
     @apply text-zinc-500 hover:bg-zinc-100 hover:text-zinc-950;
   }
 
   .sq-btn {
-    @apply flex h-7 w-7 shrink-0 items-center justify-center rounded-xl border border-[#333338] bg-[#202023] text-zinc-500 transition-colors duration-150 hover:bg-zinc-700 hover:text-zinc-200;
+    @apply flex h-7 w-7 shrink-0 items-center justify-center rounded-full border border-zinc-800 bg-[#202023]/80 text-zinc-500 transition-colors duration-150 hover:bg-zinc-800 hover:text-zinc-200;
   }
   [data-theme='light'] .sq-btn {
-    @apply border-zinc-300 bg-white text-zinc-500 hover:bg-zinc-100 hover:text-zinc-950;
+    @apply border-zinc-300 bg-white/80 text-zinc-500 hover:bg-zinc-100 hover:text-zinc-950;
   }
 
   .run-btn {
@@ -113,7 +113,7 @@
   }
 
   .ai-drawer {
-    @apply flex h-7 overflow-hidden rounded-xl border border-transparent bg-transparent transition-all duration-300 ease-in-out hover:border-[#333338] hover:bg-[#202023] hover:shadow-lg;
+    @apply flex h-7 overflow-hidden rounded-full border border-transparent bg-transparent transition-all duration-300 ease-in-out hover:border-zinc-800 hover:bg-[#202023]/80;
   }
   [data-theme='light'] .ai-drawer {
     @apply hover:border-zinc-300 hover:bg-white;
@@ -153,7 +153,7 @@
   }
 
   .tab-add {
-    @apply flex h-8 w-8 items-center justify-center rounded-xl border border-transparent bg-transparent text-zinc-500 transition-colors duration-150 hover:border-[#333338] hover:bg-[#202023] hover:text-zinc-200 disabled:cursor-not-allowed disabled:opacity-40;
+    @apply flex h-8 w-8 items-center justify-center rounded-full border border-transparent bg-transparent text-zinc-500 transition-colors duration-150 hover:border-zinc-800 hover:bg-[#202023]/80 hover:text-zinc-200 disabled:cursor-not-allowed disabled:opacity-40;
   }
   [data-theme='light'] .tab-add {
     @apply text-zinc-500 hover:border-zinc-300 hover:bg-white hover:text-zinc-950;
@@ -257,5 +257,11 @@
   }
   [data-theme='light'] .spinner {
     @apply border-zinc-500 border-t-zinc-950;
+  }
+  .text-accent {
+    @apply text-blue-400;
+  }
+  [data-theme='light'] .text-accent {
+    @apply text-blue-600;
   }
 }
