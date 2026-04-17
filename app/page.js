@@ -76,7 +76,7 @@ export default function Page() {
   };
 
   return (
-    <main className="flex min-h-screen flex-col p-2 md:flex-row">
+    <main className="flex h-screen w-full flex-col overflow-hidden p-2 md:flex-row">
       <div
         style={{ flexBasis: `${leftWidth}%` }}
         className="flex h-[60vh] w-full min-w-0 flex-col md:h-auto"

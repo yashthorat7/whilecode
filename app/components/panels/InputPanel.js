@@ -1,3 +1,4 @@
+import { useEffect, useRef } from 'react';
 import { Plus, X } from 'lucide-react';
 import Panel from '../ui/Panel';
 
@@ -14,6 +15,13 @@ export default function InputPanel({
   updateTestCase,
   fontSize = 14,
 }) {
+  const listRef = useRef(null);
+
+  useEffect(() => {
+    const textareas = listRef.current?.querySelectorAll('textarea');
+    textareas?.forEach(ta => autoHeight(ta));
+  }, [fontSize, testCases]);
+
   return (
     <Panel
       className="flex-1"
@@ -24,9 +32,12 @@ export default function InputPanel({
         </button>
       }
     >
-      <div className="panel-list">
+      <div className="panel-list" ref={listRef}>
         {testCases.map(tc => (
-          <div key={tc.id} className="group relative flex min-h-[32px] items-start px-2 py-3">
+          <div
+            key={tc.id}
+            className="group relative flex min-h-[2.2em] items-start px-[0.5em] py-[0.75em]"
+          >
             <textarea
               style={{ fontSize, color: 'var(--text-primary)' }}
               className="w-full resize-none bg-transparent font-mono whitespace-pre-wrap outline-none"

@@ -32,8 +32,12 @@ export default function SidePanels({
   const handleResize = (index, deltaY) => {
     if (!containerRef.current) return;
     const totalHeight = containerRef.current.offsetHeight;
-    const minPercent = (28 / totalHeight) * 100;
-    const snapPercent = (72 / totalHeight) * 100;
+    if (totalHeight <= 0) return;
+
+    const minPx = 28;
+    const snapPx = 72;
+    const minPercent = (minPx / totalHeight) * 100;
+    const snapPercent = (snapPx / totalHeight) * 100;
     const deltaPercent = (deltaY / totalHeight) * 100;
 
     setHeights(prev => {
@@ -55,6 +59,36 @@ export default function SidePanels({
       return next;
     });
   };
+
+  useEffect(() => {
+    if (!containerRef.current) return;
+    const observer = new ResizeObserver(() => {
+      const totalHeight = containerRef.current?.offsetHeight || 0;
+      if (totalHeight <= 0) return;
+
+      const minPercent = (32 / totalHeight) * 100;
+      setHeights(prev => {
+        const next = [...prev];
+        let changed = false;
+
+        for (let i = 0; i < next.length; i++) {
+          if (next[i] > 0 && next[i] < minPercent) {
+            next[i] = minPercent;
+            changed = true;
+          }
+        }
+
+        if (changed) {
+          const sum = next.reduce((a, b) => a + b, 0);
+          return next.map(h => (h / sum) * 100);
+        }
+        return prev;
+      });
+    });
+
+    observer.observe(containerRef.current);
+    return () => observer.disconnect();
+  }, []);
 
   return (
     <div className="relative flex-1 overflow-hidden">

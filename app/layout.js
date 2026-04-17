@@ -20,7 +20,7 @@ export default function RootLayout({ children }) {
           crossOrigin="anonymous"
         />
       </head>
-      <body className="bg-primary text-primary h-screen w-screen overflow-hidden antialiased">
+      <body className="flex h-screen w-screen flex-col overflow-hidden antialiased">
         {children}
       </body>
     </html>
