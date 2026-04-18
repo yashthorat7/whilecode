@@ -10,8 +10,8 @@ export default function TabBar({
   isRunning,
 }) {
   return (
-    <div className="relative z-30 flex h-10 shrink-0 translate-y-[2px] items-end pr-0.5 select-none">
-      <div className="flex h-9 min-w-0 items-end gap-[2px]">
+    <div className="relative z-30 flex h-[38px] shrink-0 translate-y-[1px] items-end pr-0.5 select-none">
+      <div className="flex h-[38px] min-w-0 items-end gap-[2px]">
         <button
           onClick={() => setActiveView('input')}
           className={`tab ${activeView === 'input' ? 'tab-active' : 'tab-inactive'} !w-24 px-0`}
@@ -24,7 +24,7 @@ export default function TabBar({
                   e.stopPropagation();
                   addTestCase();
                 }}
-                className="flex h-4 w-4 items-center justify-center rounded border border-white/10 bg-white/5 text-zinc-400 transition-all hover:bg-white/10 hover:text-zinc-200 active:scale-95"
+                className="mobile-add-btn"
               >
                 <Plus className="h-3 w-3" strokeWidth={2.5} />
               </div>

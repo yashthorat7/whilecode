@@ -11,12 +11,23 @@ export function useTheme() {
     if (stored) {
       setTheme(stored);
       document.documentElement.dataset.theme = stored;
-    } else if (window.matchMedia('(prefers-color-scheme: light)').matches) {
-      setTheme('light');
-      document.documentElement.dataset.theme = 'light';
     } else {
-      document.documentElement.dataset.theme = 'dark';
+      const systemTheme = window.matchMedia('(prefers-color-scheme: light)').matches
+        ? 'light'
+        : 'dark';
+      setTheme(systemTheme);
+      document.documentElement.dataset.theme = systemTheme;
     }
+
+    const mq = window.matchMedia('(prefers-color-scheme: light)');
+    const onSystemChange = e => {
+      if (localStorage.getItem(STORAGE_KEYS.THEME)) return;
+      const next = e.matches ? 'light' : 'dark';
+      setTheme(next);
+      document.documentElement.dataset.theme = next;
+    };
+    mq.addEventListener('change', onSystemChange);
+    return () => mq.removeEventListener('change', onSystemChange);
   }, []);
 
   const toggleTheme = () => {

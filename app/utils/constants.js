@@ -15,10 +15,6 @@ export const STORAGE_KEYS = {
   TABS: 'cp-tabs',
   ACTIVE_TAB: 'cp-active-tab',
   THEME: 'cp-theme',
-  FONT_SIZE: 'cp-font-size',
-  EDITOR_WIDTH: 'cp-editor-width',
-  DOCS_VISIBLE: 'cp-docs-visible',
-  DOCS_HEIGHT: 'cp-docs-height',
 };
 
 export const LANGUAGE_OPTIONS = [

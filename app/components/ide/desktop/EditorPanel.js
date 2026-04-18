@@ -12,7 +12,7 @@ export default function EditorPanel({
   if (!activeTab) return <Panel className="relative z-10 -mt-px flex-1 rounded-tl-none" />;
 
   return (
-    <Panel className="relative z-10 -mt-px flex-1 overflow-hidden rounded-tl-none p-0">
+    <Panel className="relative z-10 flex-1 overflow-hidden rounded-tl-none p-0">
       <CodeEditor
         value={activeTab.code}
         language={activeTab.language}

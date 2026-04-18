@@ -112,7 +112,7 @@ export default function Page() {
   };
 
   return (
-    <main className="flex h-screen w-full flex-col overflow-hidden bg-zinc-900 p-2 md:flex-row">
+    <main className="flex h-[100svh] w-full flex-col overflow-hidden p-2 md:flex-row">
       <div className="hidden h-full w-full flex-row overflow-hidden md:flex">
         <div style={{ flexBasis: `${leftWidth}%` }} className="flex h-full min-w-0 flex-col">
           <TabBar
@@ -179,11 +179,7 @@ export default function Page() {
           />
         </div>
 
-        <ResizeHandle
-          orientation="horizontal"
-          onResize={handleMobileResize}
-          className="-my-1 h-4"
-        />
+        <ResizeHandle orientation="horizontal" onResize={handleMobileResize} isMobileResize />
 
         <div className="min-h-0 flex-1">
           <MobileSidePanels

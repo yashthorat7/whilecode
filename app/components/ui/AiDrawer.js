@@ -14,7 +14,7 @@ export default function AiDrawer({ onAiAction, loadingAction, className = '' }) 
         {DRAWER_ITEMS.map((item, i) => (
           <button
             key={item.action}
-            className={`seg-cell min-w-[28px] shrink-0 ${i > 0 ? 'border-l border-zinc-800' : ''} ${i === DRAWER_ITEMS.length - 1 ? 'border-r border-zinc-800' : ''} ${loadingAction === item.action ? 'animate-pulse text-zinc-100' : ''}`}
+            className={`seg-cell min-w-[28px] shrink-0 ${i > 0 ? 'border-partition-l' : ''} ${i === DRAWER_ITEMS.length - 1 ? 'border-partition-r' : ''} ${loadingAction === item.action ? 'text-active-pulse animate-pulse' : ''}`}
             title={item.title}
             disabled={!!loadingAction}
             onClick={() => onAiAction(item.action)}
@@ -24,7 +24,7 @@ export default function AiDrawer({ onAiAction, loadingAction, className = '' }) 
         ))}
       </div>
       <button
-        className={`seg-cell min-w-[28px] shrink-0 transition-colors ${loadingAction === 'hint' ? 'animate-pulse text-zinc-100' : ''}`}
+        className={`seg-cell min-w-[28px] shrink-0 transition-colors ${loadingAction === 'hint' ? 'text-active-pulse animate-pulse' : ''}`}
         title="Hint"
         disabled={!!loadingAction}
         onClick={() => onAiAction('hint')}

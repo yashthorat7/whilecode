@@ -13,7 +13,7 @@ export default function Toolbar({
   toggleTheme,
 }) {
   return (
-    <div className="mb-[10px] flex h-7 items-center justify-end gap-2">
+    <div className="mb-2 flex h-7 items-center justify-end gap-2">
       <SegmentedButton>
         <button
           onClick={() => setShowNotes(!showNotes)}
