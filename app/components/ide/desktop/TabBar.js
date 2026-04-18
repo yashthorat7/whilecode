@@ -1,5 +1,5 @@
 import { Plus } from 'lucide-react';
-import Tab from '../ui/Tab';
+import Tab from '../../ui/Tab';
 import {
   DndContext,
   closestCenter,
@@ -30,14 +30,14 @@ export default function TabBar({
   };
 
   return (
-    <div className="relative z-20 flex h-9 items-end select-none">
+    <div className="group/tabbar relative z-20 flex h-[38px] items-end select-none">
       <DndContext
         sensors={sensors}
         collisionDetection={closestCenter}
         onDragEnd={handleDragEnd}
         modifiers={[restrictToHorizontalAxis, restrictToParentElement]}
       >
-        <div className="flex h-full min-w-0 items-end">
+        <div className="flex h-9 min-w-0 items-end">
           <div className="flex h-full min-w-0 items-end gap-[2px]">
             <SortableContext items={tabs.map(t => t.id)} strategy={horizontalListSortingStrategy}>
               {tabs.map(tab => (

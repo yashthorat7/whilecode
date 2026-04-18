@@ -1,4 +1,4 @@
-import Panel from '../ui/Panel';
+import Panel from '../../ui/Panel';
 import CodeEditor from '../CodeEditor';
 
 export default function EditorPanel({

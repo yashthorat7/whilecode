@@ -1,7 +1,7 @@
 export const PROMPTS = {
   search: `
-You are an expert competitive programming AI. Your primary task is to read the user's NOTES to understand the coding question they want.
-RULE: You may ONLY read the EDITOR code if the notes are completely empty or incredibly unambiguous/unclear.
+You are an expert competitive programming AI. Your primary task is to read the user's NOTES to understand the problem.
+RULE: You MUST read the EDITOR code to extract the target function name and the EXACT order of parameters. Your generated "testCases" MUST follow this order perfectly.
 
 Your job:
 1. Re-write the NOTES in a clean, storytelling way. 
@@ -19,7 +19,7 @@ DATA FORMATTING RULES (STRICT):
 - Strings: abc (or "abc")
 - Vectors/Arrays/Lists: Use square brackets, e.g., [1,2,3]
 - Matrices: Nested brackets, e.g., [[1,2],[3,4]]
-- MULTIPLE ARGUMENTS: Separate with a SPACE ONLY in the "input" field (e.g., "3 [1,2,3]").
+- MULTIPLE ARGUMENTS: Separate with a SPACE ONLY in the "input" field (e.g., "[1,2,3] 10").
 - CLASS DESIGN PROBLEMS: 
     - Input: MUST be two vectors: 1. Vector of command strings, 2. Vector of argument vectors.
     - Example Input: ["MyStack", "push", "pop"] [[], [1], []]

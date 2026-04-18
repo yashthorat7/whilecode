@@ -1,9 +1,11 @@
 'use client';
 import { useState } from 'react';
-import TabBar from './components/panels/TabBar';
-import EditorPanel from './components/panels/EditorPanel';
-import Toolbar from './components/panels/Toolbar';
-import SidePanels from './components/panels/SidePanels';
+import TabBar from './components/ide/desktop/TabBar';
+import EditorPanel from './components/ide/desktop/EditorPanel';
+import Toolbar from './components/ide/desktop/Toolbar';
+import SidePanels from './components/ide/desktop/SidePanels';
+import MobileEditorPanel from './components/ide/mobile/EditorPanel';
+import MobileSidePanels from './components/ide/mobile/SidePanels';
 import ResizeHandle from './components/ui/ResizeHandle';
 import { useTabs } from './hooks/useTabs';
 import { useTheme } from './hooks/useTheme';
@@ -14,7 +16,9 @@ export default function Page() {
   const [fontSize, setFontSize] = useState(14);
   const [showNotes, setShowNotes] = useState(false);
   const [leftWidth, setLeftWidth] = useState(75);
+  const [topHeight, setTopHeight] = useState(70);
   const [isSaveModalOpen, setIsSaveModalOpen] = useState(false);
+  const [mobileView, setMobileView] = useState('input');
 
   const {
     tabs,
@@ -39,6 +43,38 @@ export default function Page() {
   const handleResize = deltaX => {
     const pct = (deltaX / window.innerWidth) * 100;
     setLeftWidth(prev => Math.min(Math.max(prev + pct, 50), 85));
+  };
+
+  const handleMobileResize = deltaY => {
+    const vh = window.innerHeight;
+    const pct = (deltaY / vh) * 100;
+    const nextPct = topHeight + pct;
+
+    const minIoPct = (38 / vh) * 100;
+    const snapPoint = 100 - minIoPct;
+
+    if (deltaY > 0 && nextPct > snapPoint - 3) {
+      setTopHeight(snapPoint);
+    } else if (deltaY < 0 && nextPct < 3) {
+      setTopHeight(0);
+    } else {
+      const minEditor = nextPct < 15 ? 0 : 30;
+      setTopHeight(Math.min(Math.max(nextPct, minEditor), snapPoint));
+    }
+  };
+
+  const handleMobileRun = tab => {
+    run(tab, updateTestCase);
+
+    const vh = window.innerHeight;
+    const minIoPct = (32 / vh) * 100;
+    const snapPoint = 100 - minIoPct;
+
+    if (Math.abs(topHeight - snapPoint) < 1) {
+      setTopHeight(50);
+    }
+
+    setMobileView('output');
   };
 
   const handleAiAction = async action => {
@@ -76,60 +112,95 @@ export default function Page() {
   };
 
   return (
-    <main className="flex h-screen w-full flex-col overflow-hidden p-2 md:flex-row">
-      <div
-        style={{ flexBasis: `${leftWidth}%` }}
-        className="flex h-[60vh] w-full min-w-0 flex-col md:h-auto"
-      >
-        <TabBar
-          tabs={tabs}
-          activeTabId={activeTabId}
-          setActiveTabId={setActiveTabId}
-          addTab={addTab}
-          removeTab={removeTab}
-          reorderTabs={reorderTabs}
-          canAddTab={canAddTab}
-        />
-        <EditorPanel
-          activeTab={activeTab}
-          updateTabCode={updateTabCode}
-          fontSize={fontSize}
-          theme={theme}
-          onRun={tab => run(tab, updateTestCase)}
-          isRunning={isRunning}
-        />
+    <main className="flex h-screen w-full flex-col overflow-hidden bg-zinc-900 p-2 md:flex-row">
+      <div className="hidden h-full w-full flex-row overflow-hidden md:flex">
+        <div style={{ flexBasis: `${leftWidth}%` }} className="flex h-full min-w-0 flex-col">
+          <TabBar
+            tabs={tabs}
+            activeTabId={activeTabId}
+            setActiveTabId={setActiveTabId}
+            addTab={addTab}
+            removeTab={removeTab}
+            reorderTabs={reorderTabs}
+            canAddTab={canAddTab}
+          />
+          <EditorPanel
+            activeTab={activeTab}
+            updateTabCode={updateTabCode}
+            fontSize={fontSize}
+            theme={theme}
+            onRun={tab => run(tab, updateTestCase)}
+            isRunning={isRunning}
+          />
+        </div>
+
+        <ResizeHandle orientation="vertical" onResize={handleResize} />
+
+        <div className="flex min-w-[155px] flex-1 flex-col">
+          <Toolbar
+            fontSize={fontSize}
+            setFontSize={setFontSize}
+            showNotes={showNotes}
+            setShowNotes={setShowNotes}
+            onDownload={() => setIsSaveModalOpen(p => !p)}
+            isSaveModalOpen={isSaveModalOpen}
+            theme={theme}
+            toggleTheme={toggleTheme}
+          />
+          <SidePanels
+            showNotes={showNotes}
+            isSaveModalOpen={isSaveModalOpen}
+            setIsSaveModalOpen={setIsSaveModalOpen}
+            tabs={tabs}
+            activeTabId={activeTabId}
+            activeTab={activeTab}
+            updateTabNotes={updateTabNotes}
+            updateTestCase={updateTestCase}
+            addTestCase={addTestCase}
+            removeTestCase={removeTestCase}
+            globalError={globalError}
+            onAiAction={handleAiAction}
+            loadingAction={loadingAction}
+            complexity={activeTab?.complexity}
+            fontSize={fontSize}
+          />
+        </div>
       </div>
 
-      <ResizeHandle orientation="vertical" onResize={handleResize} className="hidden md:block" />
+      <div className="flex h-full w-full flex-col md:hidden">
+        <div style={{ flexBasis: `${topHeight}%` }} className="min-h-0">
+          <MobileEditorPanel
+            activeTab={activeTab}
+            updateTabCode={updateTabCode}
+            fontSize={fontSize}
+            theme={theme}
+            onRun={handleMobileRun}
+            isRunning={isRunning}
+          />
+        </div>
 
-      <div className="flex min-w-[155px] flex-1 flex-col">
-        <Toolbar
-          fontSize={fontSize}
-          setFontSize={setFontSize}
-          showNotes={showNotes}
-          setShowNotes={setShowNotes}
-          onDownload={() => setIsSaveModalOpen(p => !p)}
-          isSaveModalOpen={isSaveModalOpen}
-          theme={theme}
-          toggleTheme={toggleTheme}
+        <ResizeHandle
+          orientation="horizontal"
+          onResize={handleMobileResize}
+          className="-my-1 h-4"
         />
-        <SidePanels
-          showNotes={showNotes}
-          isSaveModalOpen={isSaveModalOpen}
-          setIsSaveModalOpen={setIsSaveModalOpen}
-          tabs={tabs}
-          activeTabId={activeTabId}
-          activeTab={activeTab}
-          updateTabNotes={updateTabNotes}
-          updateTestCase={updateTestCase}
-          addTestCase={addTestCase}
-          removeTestCase={removeTestCase}
-          globalError={globalError}
-          onAiAction={handleAiAction}
-          loadingAction={loadingAction}
-          complexity={activeTab?.complexity}
-          fontSize={fontSize}
-        />
+
+        <div className="min-h-0 flex-1">
+          <MobileSidePanels
+            testCases={activeTab?.testCases || []}
+            addTestCase={addTestCase}
+            removeTestCase={removeTestCase}
+            updateTestCase={updateTestCase}
+            globalError={globalError}
+            activeTab={activeTab}
+            complexity={activeTab?.complexity}
+            fontSize={fontSize}
+            onRun={handleMobileRun}
+            isRunning={isRunning}
+            activeView={mobileView}
+            setActiveView={setMobileView}
+          />
+        </div>
       </div>
     </main>
   );

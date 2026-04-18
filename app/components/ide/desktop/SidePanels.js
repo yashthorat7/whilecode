@@ -2,7 +2,7 @@ import { useState, useRef, useEffect } from 'react';
 import NotesPanel from './NotesPanel';
 import InputPanel from './InputPanel';
 import OutputPanel from './OutputPanel';
-import ResizeHandle from '../ui/ResizeHandle';
+import ResizeHandle from '../../ui/ResizeHandle';
 import SaveModal from './SaveModal';
 
 export default function SidePanels({

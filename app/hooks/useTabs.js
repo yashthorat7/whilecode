@@ -47,7 +47,10 @@ export function useTabs() {
     code: DEFAULT_CODE_CPP,
     notes: '',
     complexity: '',
-    testCases: [{ id: crypto.randomUUID(), input: '', output: '', status: 'idle' }],
+    testCases: [
+      { id: crypto.randomUUID(), input: '5', output: '120', status: 'idle' },
+      { id: crypto.randomUUID(), input: '6', output: '720', status: 'idle' },
+    ],
     createdAt: Date.now(),
   });
 

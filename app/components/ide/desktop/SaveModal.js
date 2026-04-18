@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import JSZip from 'jszip';
-import Panel from '../ui/Panel';
+import Panel from '../../ui/Panel';
 import { Download, Copy, Check, ListChecks } from 'lucide-react';
 
 const getFilename = tab => {

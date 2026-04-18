@@ -1,5 +1,5 @@
-import Panel from '../ui/Panel';
-import AiDrawer from '../ui/AiDrawer';
+import Panel from '../../ui/Panel';
+import AiDrawer from '../../ui/AiDrawer';
 
 export default function NotesPanel({
   notes,
