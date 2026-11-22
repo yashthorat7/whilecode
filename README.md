@@ -4,7 +4,7 @@
 
 **WhileCode** is an elite, AI-powered competitive programming workspace engineered specifically for high-performance algorithm solving and logic mastery. Designed around instant execution, strict memory limits, and seamless test-case management, it transforms standard algorithmic grinding into a lightning-fast premium experience with deep C++ runtime support.
 
-[![Next.js](https://img.shields.io/badge/Next.js-15-black?logo=next.js)](https://nextjs.org/) [![React](https://img.shields.io/badge/React-19-blue?logo=react)](https://reactjs.org/) [![TailwindCSS](https://img.shields.io/badge/TailwindCSS-4.0-38B2AC?logo=tailwind-css)](https://tailwindcss.com/) [![Editor](https://img.shields.io/badge/Editor-Monaco-blue)](https://github.com/suren-atoyan/monaco-react) [![AI](https://img.shields.io/badge/AI-Groq_Llama_3-orange)](https://groq.com/)
+[![Next.js](https://img.shields.io/badge/Next.js-15-black?logo=next.js)](https://nextjs.org/) [![React](https://img.shields.io/badge/React-19-blue?logo=react)](https://reactjs.org/) [![TailwindCSS](https://img.shields.io/badge/TailwindCSS-4.0-38B2AC?logo=tailwind-css)](https://tailwindcss.com/) [![Editor](https://img.shields.io/badge/Editor-Monaco-blue)](https://github.com/suren-atoyan/monaco-react) [![AI](https://img.shields.io/badge/AI-Google_Gemini-blue)](https://ai.google.dev/)
 
 ---
 
@@ -18,7 +18,7 @@
 
 ### 🤖 The Elite Algorithm Mentor
 
-- **Expert Problem Analyst**: Integrated with the **Groq SDK**, our AI mimics high-rated Codeforces logic to guide without handing out the raw answers.
+- **Expert Problem Analyst**: Integrated with Google's **Gemini API** via `@google/genai`, our AI mimics high-rated Codeforces logic to guide without handing out the raw answers.
 - **Complexity Focus**: Actively breaks down your algorithmic code into absolute Big-O metrics, analyzing operations against $T: O(N)$ limits and space against $S: O(1)$ boundaries.
 - **JSON-Synchronized Test Cases**: The AI seamlessly pushes corner-case arrays directly into your IDE's internal state—catching bounds errors before you even hit run.
 
@@ -50,7 +50,7 @@
 ### Backend
 
 - **Framework**: Next.js 15 (App Router & API Routes)
-- **AI Inference Engine**: Groq SDK (Llama/Mixtral)
+- **AI Inference Engine**: Google Gen AI SDK (`@google/genai`)
 - **Execution Pipeline**: Custom C++ compiler orchestration logic
 - **Data Parsing**: Advanced internal abstractions and regex logic for standard output streams
 
@@ -91,7 +91,7 @@ whilecode/
 
 - **Node.js**: v18.0 or higher.
 - **Git**: For version tracking.
-- **Groq API Key**: Essential for the Algorithmic Mentor (obtain from the [Groq Console](https://console.groq.com/)).
+- **Gemini API Key**: Essential for the Algorithmic Mentor (obtain from [Google AI Studio](https://aistudio.google.com/)).
 
 ### Installation
 
@@ -110,7 +110,7 @@ whilecode/
 
 3. **Setup Environment Variables**: Create a `.env.local` file in the root directory:
    ```env
-   GROQ_API_KEY=gsk_your_key_here
+   GEMINI_API_KEY=your_key_here
    ```
 
 ### Running the Environment
