@@ -11,6 +11,7 @@ export function useTabs() {
   const activeTab = tabs.find(t => t.id === activeTabId) || tabs[0] || null;
 
   const getDynamicName = code => {
+    if (!code || typeof code !== 'string') return null;
     const lineComment = code.match(/\/\/\s*(.*?)(\n|$)/);
     const blockComment = code.match(/\/\*\s*([\s\S]*?)\*\//);
 
@@ -23,11 +24,15 @@ export function useTabs() {
       commentText = blockComment[1];
     }
 
-    const words = commentText
+    const cleaned = commentText
       .trim()
+      .replace(/^(?:leetcode\s*\d+[:\-]?|problem\s*\d+[:\-]?|#?\d+[\.:\-]?)\s*/i, '')
+      .trim();
+
+    const words = cleaned
       .split(/\s+/)
       .filter(w => w.length > 0)
-      .slice(0, 3);
+      .slice(0, 4);
     return words.length > 0 ? words.join(' ') : null;
   };
 
@@ -130,7 +135,17 @@ export function useTabs() {
   };
 
   const updateActiveTab = partial => {
-    setTabs(prev => prev.map(t => (t.id === activeTabId ? { ...t, ...partial } : t)));
+    setTabs(prev =>
+      prev.map(t => {
+        if (t.id !== activeTabId) return t;
+        const updated = { ...t, ...partial };
+        if (partial.code) {
+          const dynamicName = getDynamicName(partial.code);
+          if (dynamicName) updated.name = dynamicName;
+        }
+        return updated;
+      })
+    );
   };
 
   const updateTabCode = code => {

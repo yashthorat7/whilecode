@@ -53,6 +53,7 @@ export default function TabBar({
           target="_blank"
           rel="noopener noreferrer"
           className="flex !h-7 !w-7 !min-w-[28px] items-center justify-center !p-0"
+          title="GitHub"
         >
           <svg
             width="14"

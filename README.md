@@ -4,7 +4,7 @@
 
 **WhileCode** is an elite, AI-powered competitive programming workspace engineered specifically for high-performance algorithm solving and logic mastery. Designed around instant execution, strict memory limits, and seamless test-case management, it transforms standard algorithmic grinding into a lightning-fast premium experience with deep C++ runtime support.
 
-[![Next.js](https://img.shields.io/badge/Next.js-15-black?logo=next.js)](https://nextjs.org/) [![React](https://img.shields.io/badge/React-19-blue?logo=react)](https://reactjs.org/) [![TailwindCSS](https://img.shields.io/badge/TailwindCSS-4.0-38B2AC?logo=tailwind-css)](https://tailwindcss.com/) [![Editor](https://img.shields.io/badge/Editor-Monaco-blue)](https://github.com/suren-atoyan/monaco-react) [![AI](https://img.shields.io/badge/AI-Google_Gemini-blue)](https://ai.google.dev/)
+[![Next.js](https://img.shields.io/badge/Next.js-15-black?logo=next.js)](https://nextjs.org/) [![React](https://img.shields.io/badge/React-19-blue?logo=react)](https://reactjs.org/) [![TailwindCSS](https://img.shields.io/badge/TailwindCSS-4.0-38B2AC?logo=tailwind-css)](https://tailwindcss.com/) [![Editor](https://img.shields.io/badge/Editor-Monaco-blue)](https://github.com/suren-atoyan/monaco-react) [![AI](https://img.shields.io/badge/AI-Groq_LPU-f55036?logo=groq)](https://groq.com/)
 
 ---
 
@@ -16,11 +16,13 @@
 - **Contest-Ready I/O**: Custom `read<T>` helpers inherently resolve arrays, matrices, and tightly-packed complex delimiters automatically.
 - **Object-Oriented Harness**: Smartly detects standalone function questions versus stateful class queries (e.g., LRU Cache) and dynamically mocks the respective sequence of commands.
 
-### 🤖 The Elite Algorithm Mentor
+### 🤖 Ultra-Fast Algorithm Mentor (Powered by Groq LPUs)
 
-- **Expert Problem Analyst**: Integrated with Google's **Gemini API** via `@google/genai`, our AI mimics high-rated Codeforces logic to guide without handing out the raw answers.
+- **Sub-Second Problem & Code Generation**: Integrated with **Groq's LPU Inference Engine** (`qwen/qwen3.8-27b` and `openai/gpt-oss-120b`), delivering responses in **700ms – 1.6s** at 500+ tokens/sec.
+- **Generous Free-Tier Quota**: Operates on Groq's high-throughput free tier offering **1,000 requests/day** and **30 requests/minute** with zero 503 traffic-spike timeouts.
 - **Complexity Focus**: Actively breaks down your algorithmic code into absolute Big-O metrics, analyzing operations against $T: O(N)$ limits and space against $S: O(1)$ boundaries.
 - **JSON-Synchronized Test Cases**: The AI seamlessly pushes corner-case arrays directly into your IDE's internal state—catching bounds errors before you even hit run.
+- **Clean Editor-Ready Formatting**: Outputs structured problem specifications free of markdown asterisks and emojis, designed specifically for clean display in competitive programming plain-text notes.
 
 ### 💻 Rapid Algorithm Implementation
 
@@ -50,7 +52,7 @@
 ### Backend
 
 - **Framework**: Next.js 15 (App Router & API Routes)
-- **AI Inference Engine**: Google Gen AI SDK (`@google/genai`)
+- **AI Inference Engine**: Groq Cloud LPU API (`qwen/qwen3.8-27b` / `openai/gpt-oss-120b`)
 - **Execution Pipeline**: Custom C++ compiler orchestration logic
 - **Data Parsing**: Advanced internal abstractions and regex logic for standard output streams
 
@@ -62,7 +64,7 @@
 whilecode/
 ├── app/                  # Next.js App Router
 │   ├── api/              # API Routes
-│   │   ├── ai/           # Algorithm Mentor proxy routes
+│   │   ├── ai/           # Groq Algorithm Mentor proxy routes
 │   │   └── compile/      # Remote execution environments
 │   ├── components/       # UI Directory
 │   │   ├── ide/          # Workspace structure (EditorPanel, Output, etc.)
@@ -91,7 +93,7 @@ whilecode/
 
 - **Node.js**: v18.0 or higher.
 - **Git**: For version tracking.
-- **Gemini API Key**: Essential for the Algorithmic Mentor (obtain from [Google AI Studio](https://aistudio.google.com/)).
+- **Groq API Key**: Essential for the Algorithmic Mentor (obtain a free key from [Groq Console](https://console.groq.com/keys)).
 
 ### Installation
 
@@ -110,7 +112,7 @@ whilecode/
 
 3. **Setup Environment Variables**: Create a `.env.local` file in the root directory:
    ```env
-   GEMINI_API_KEY=your_key_here
+   GROQ_API_KEY=your_groq_api_key_here
    ```
 
 ### Running the Environment
@@ -131,9 +133,9 @@ whilecode/
 
 To ensure the AI operates as an advanced CP mentor rather than an answer-spitting bot, the system prompt aggressively structures output. It mandates:
 
-- Re-phrasing dry algorithmic challenges into clean, emoji-driven story formats.
+- Providing clean, distraction-free problem statements without asterisks (`**`) or emojis for optimal plain-text readability.
 - Supplying precisely curated arrays of test-case edge inputs (`null` checking, single-element vectors, maximum value integers).
-- Extracting Big-O complexity metrics explicitly so users understand performance overhead before compilation.
+- Extracting Big-O complexity metrics explicitly ($T: O(N)$, $S: O(1)$) so users understand performance overhead before compilation.
 
 ### ⚡ Zero-Latency Workflow
 
@@ -166,7 +168,7 @@ WhileCode doesn't just evaluate raw text; it builds a full compilation envelope 
 
 | Method | Endpoint | Description |
 | --- | --- | --- |
-| POST | `/api/ai` | Resolves problem parameters, inspects edge logic, or supplies non-breaking hints. |
+| POST | `/api/ai` | Resolves problem parameters, inspects edge logic, or supplies hints via Groq (`qwen/qwen3.8-27b`). |
 
 ### 🔨 Compilation Endpoint
 

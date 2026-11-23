@@ -19,6 +19,7 @@ export default function Toolbar({
           onClick={() => setShowNotes(!showNotes)}
           className="seg-cell"
           style={showNotes ? { color: 'var(--text-primary)' } : undefined}
+          title="Notes"
         >
           <FileText className="h-3.5 w-3.5" strokeWidth={1.5} />
         </button>
@@ -26,6 +27,7 @@ export default function Toolbar({
           onClick={onDownload}
           className="seg-cell"
           style={isSaveModalOpen ? { color: 'var(--text-primary)' } : undefined}
+          title="Download"
         >
           <Download className="h-3.5 w-3.5" strokeWidth={1.5} />
         </button>
@@ -34,11 +36,23 @@ export default function Toolbar({
             {fontSize}
           </span>
           <div className="absolute inset-0 flex">
-            <button className="flex-1" onClick={() => setFontSize(s => Math.max(10, s - 1))} />
-            <button className="flex-1" onClick={() => setFontSize(s => Math.min(30, s + 1))} />
+            <button
+              className="flex-1"
+              onClick={() => setFontSize(s => Math.max(10, s - 1))}
+              title="Decrease size"
+            />
+            <button
+              className="flex-1"
+              onClick={() => setFontSize(s => Math.min(30, s + 1))}
+              title="Increase size"
+            />
           </div>
         </div>
-        <button onClick={toggleTheme} className="seg-cell">
+        <button
+          onClick={toggleTheme}
+          className="seg-cell"
+          title={theme === 'dark' ? 'Light theme' : 'Dark theme'}
+        >
           {theme === 'dark' ? (
             <Moon className="h-3.5 w-3.5" strokeWidth={1.5} />
           ) : (
@@ -47,7 +61,12 @@ export default function Toolbar({
         </button>
       </SegmentedButton>
 
-      <Button href="https://github.com/yashthorat7" target="_blank" rel="noopener noreferrer">
+      <Button
+        href="https://github.com/yashthorat7"
+        target="_blank"
+        rel="noopener noreferrer"
+        title="GitHub"
+      >
         <svg
           width="14"
           height="14"

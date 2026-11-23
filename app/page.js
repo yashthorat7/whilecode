@@ -11,6 +11,7 @@ import { useTabs } from './hooks/useTabs';
 import { useTheme } from './hooks/useTheme';
 import { useCodeExecution } from './hooks/useCodeExecution';
 import { useAiAssistant } from './hooks/useAiAssistant';
+import { isDefaultOrTrivialCode, stripDefaultBoilerplateComment } from './utils/constants';
 
 export default function Page() {
   const [fontSize, setFontSize] = useState(14);
@@ -89,22 +90,57 @@ export default function Page() {
     if (!result) return;
 
     const updates = {};
-    if (result.code) updates.code = result.code;
-    if (result.notes) {
-      updates.notes =
-        action === 'inspect'
-          ? (activeTab.notes || '') + '\n\n---\n🔍 Inspect:\n' + result.notes
-          : result.notes;
+
+    const codeAction = result.plan?.codeAction || (result.code ? 'replace' : 'keep');
+    if (codeAction === 'replace' && result.code) {
+      let finalCode = result.code;
+      if (isDefaultOrTrivialCode(activeTab?.code)) {
+        finalCode = stripDefaultBoilerplateComment(finalCode);
+      }
+      updates.code = finalCode;
     }
-    if (result.testCases && Array.isArray(result.testCases)) {
-      updates.testCases = result.testCases.map(tc => ({
+
+    const notesAction =
+      result.plan?.notesAction ||
+      (action === 'inspect' ? 'append' : result.notes ? 'replace' : 'keep');
+
+    if (result.notes) {
+      if (notesAction === 'append') {
+        const existing = (activeTab.notes || '').trim();
+        updates.notes = existing ? `${existing}\n\n${result.notes}` : result.notes;
+      } else if (notesAction === 'replace') {
+        updates.notes = result.notes;
+      }
+    }
+
+    const testCasesAction =
+      result.plan?.testCasesAction || (action === 'search' ? 'replace' : 'keep');
+
+    if (result.testCases && Array.isArray(result.testCases) && result.testCases.length > 0) {
+      const newCases = result.testCases.map(tc => ({
         id: crypto.randomUUID(),
         input: tc.input || '',
         output: tc.output || '',
         status: 'idle',
       }));
+
+      if (testCasesAction === 'append') {
+        const existingCases = activeTab.testCases || [];
+        const existingKeys = new Set(
+          existingCases.map(tc => `${(tc.input || '').trim()}::${(tc.output || '').trim()}`)
+        );
+        const filteredNew = newCases.filter(
+          nc => !existingKeys.has(`${nc.input.trim()}::${nc.output.trim()}`)
+        );
+        updates.testCases = [...existingCases, ...filteredNew];
+      } else if (testCasesAction === 'replace') {
+        updates.testCases = newCases;
+      }
     }
-    if (result.complexity) updates.complexity = result.complexity;
+
+    if (result.complexity) {
+      updates.complexity = result.complexity;
+    }
 
     if (Object.keys(updates).length > 0) {
       updateActiveTab(updates);

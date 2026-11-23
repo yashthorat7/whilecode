@@ -29,3 +29,53 @@ export const PISTON_CONFIG = {
   RUN_TIMEOUT: 5000,
   MEMORY_LIMIT: 268435456,
 };
+
+export function isDefaultOrTrivialCode(code) {
+  if (!code || typeof code !== 'string') return true;
+  const trimmed = code.trim();
+  if (!trimmed) return true;
+
+  const withoutComments = trimmed.replace(/\/\*[\s\S]*?\*\/|\/\/.*/g, '').trim();
+  if (!withoutComments) return true;
+
+  const norm = trimmed.replace(/\r\n/g, '\n');
+  if (
+    norm === DEFAULT_CODE_CPP.trim().replace(/\r\n/g, '\n') ||
+    norm === DEFAULT_CODE_C.trim().replace(/\r\n/g, '\n')
+  ) {
+    return true;
+  }
+
+  if (
+    (withoutComments.includes('factorial') || withoutComments.includes('return a + b;')) &&
+    withoutComments.length < 200
+  ) {
+    return true;
+  }
+
+  if (
+    withoutComments.length < 50 &&
+    (withoutComments.includes('solve()') || withoutComments.includes('main()'))
+  ) {
+    return true;
+  }
+
+  return false;
+}
+
+export function stripDefaultBoilerplateComment(code) {
+  if (!code || typeof code !== 'string') return code;
+  const match = code.match(/^\s*\/\*([\s\S]*?)\*\/\s*/);
+  if (match) {
+    const commentContent = match[1];
+    if (
+      commentContent.includes('factorial') ||
+      commentContent.includes('Add Two Numbers') ||
+      commentContent.includes('Recursive Factorial') ||
+      isDefaultOrTrivialCode(commentContent)
+    ) {
+      return code.slice(match[0].length).trimStart();
+    }
+  }
+  return code;
+}

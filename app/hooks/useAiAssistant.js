@@ -17,10 +17,10 @@ export const useAiAssistant = () => {
             prompt,
             action,
             context: {
-              code: tab.code,
-              notes: tab.notes,
-              language: tab.language,
-              testCases: tab.testCases.map(tc => ({
+              code: tab?.code || '',
+              notes: tab?.notes || '',
+              language: tab?.language || 'cpp',
+              testCases: (tab?.testCases || []).map(tc => ({
                 input: tc.input,
                 output: tc.output,
                 status: tc.status,
