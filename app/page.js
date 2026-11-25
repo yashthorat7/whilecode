@@ -36,9 +36,10 @@ export default function Page() {
     addTestCase,
     removeTestCase,
     updateActiveTab,
+    resetOutputs,
   } = useTabs();
   const { theme, toggleTheme } = useTheme();
-  const { run, isRunning, globalError } = useCodeExecution();
+  const { run, isRunning, globalError, clearError } = useCodeExecution();
   const { ask, loadingAction } = useAiAssistant();
 
   const handleResize = deltaX => {
@@ -76,6 +77,12 @@ export default function Page() {
     }
 
     setMobileView('output');
+  };
+
+  const handleResetOutput = () => {
+    if (isRunning) return;
+    clearError();
+    resetOutputs();
   };
 
   const handleAiAction = async action => {
@@ -121,6 +128,7 @@ export default function Page() {
         id: crypto.randomUUID(),
         input: tc.input || '',
         output: tc.output || '',
+        expectedOutput: tc.output || '',
         status: 'idle',
       }));
 
@@ -134,6 +142,7 @@ export default function Page() {
         );
         updates.testCases = [...existingCases, ...filteredNew];
       } else if (testCasesAction === 'replace') {
+        clearError();
         updates.testCases = newCases;
       }
     }
@@ -199,6 +208,7 @@ export default function Page() {
             loadingAction={loadingAction}
             complexity={activeTab?.complexity}
             fontSize={fontSize}
+            onResetOutput={handleResetOutput}
           />
         </div>
       </div>
@@ -231,6 +241,7 @@ export default function Page() {
             isRunning={isRunning}
             activeView={mobileView}
             setActiveView={setMobileView}
+            onResetOutput={handleResetOutput}
           />
         </div>
       </div>

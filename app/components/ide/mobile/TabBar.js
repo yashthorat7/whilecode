@@ -8,6 +8,7 @@ export default function TabBar({
   onRun,
   activeTab,
   isRunning,
+  onResetOutput,
 }) {
   return (
     <div className="relative z-30 flex h-[38px] shrink-0 translate-y-[1px] items-end pr-0.5 select-none">
@@ -32,7 +33,7 @@ export default function TabBar({
           </div>
         </button>
         <button
-          onClick={() => setActiveView('output')}
+          onClick={() => (activeView === 'output' ? onResetOutput?.() : setActiveView('output'))}
           className={`tab ${activeView === 'output' ? 'tab-active' : 'tab-inactive'} !w-24 justify-center px-0`}
         >
           <span className="tracking-tight">OUTPUT</span>

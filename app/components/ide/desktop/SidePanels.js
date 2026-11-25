@@ -21,6 +21,7 @@ export default function SidePanels({
   loadingAction,
   complexity,
   fontSize,
+  onResetOutput,
 }) {
   const [heights, setHeights] = useState(showNotes ? [33.3, 33.3, 33.4] : [0, 50, 50]);
   const containerRef = useRef(null);
@@ -140,6 +141,7 @@ export default function SidePanels({
             globalError={globalError}
             complexity={complexity}
             fontSize={fontSize}
+            onResetOutput={onResetOutput}
           />
         </div>
       </div>

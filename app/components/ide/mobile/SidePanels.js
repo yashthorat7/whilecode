@@ -16,6 +16,7 @@ export default function MobileSidePanels({
   isRunning,
   activeView,
   setActiveView,
+  onResetOutput,
 }) {
   return (
     <div className="flex h-full min-h-0 flex-col">
@@ -26,6 +27,7 @@ export default function MobileSidePanels({
         onRun={onRun}
         activeTab={activeTab}
         isRunning={isRunning}
+        onResetOutput={onResetOutput}
       />
 
       <Panel className="min-h-0 flex-1 overflow-hidden rounded-tl-none pb-0">

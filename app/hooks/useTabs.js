@@ -53,8 +53,8 @@ export function useTabs() {
     notes: '',
     complexity: '',
     testCases: [
-      { id: crypto.randomUUID(), input: '5', output: '120', status: 'idle' },
-      { id: crypto.randomUUID(), input: '6', output: '720', status: 'idle' },
+      { id: crypto.randomUUID(), input: '5', output: '120', expectedOutput: '120', status: 'idle' },
+      { id: crypto.randomUUID(), input: '6', output: '720', expectedOutput: '720', status: 'idle' },
     ],
     createdAt: Date.now(),
   });
@@ -68,6 +68,8 @@ export function useTabs() {
     testCases: (tab.testCases || []).map(tc => ({
       ...tc,
       id: tc.id || crypto.randomUUID(),
+      expectedOutput:
+        tc.expectedOutput ?? (tc.status === 'idle' || !tc.status ? tc.output || '' : ''),
       status: tc.status || 'idle',
     })),
   });
@@ -166,11 +168,29 @@ export function useTabs() {
       id: crypto.randomUUID(),
       input: '',
       output: '',
+      expectedOutput: '',
       status: 'idle',
     };
     updateActiveTab({
       testCases: [...activeTab.testCases, newTestCase],
     });
+  };
+
+  const resetOutputs = () => {
+    setTabs(prev =>
+      prev.map(tab =>
+        tab.id === activeTabId
+          ? {
+              ...tab,
+              testCases: tab.testCases.map(tc => ({
+                ...tc,
+                output: tc.expectedOutput ?? '',
+                status: 'idle',
+              })),
+            }
+          : tab
+      )
+    );
   };
 
   const removeTestCase = id => {
@@ -217,5 +237,6 @@ export function useTabs() {
     addTestCase,
     removeTestCase,
     updateTestCase,
+    resetOutputs,
   };
 }

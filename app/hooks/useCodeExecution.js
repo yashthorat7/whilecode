@@ -73,5 +73,10 @@ export const useCodeExecution = () => {
     [isRunning]
   );
 
-  return { isRunning, executionTime, globalError, run };
+  const clearError = useCallback(() => {
+    setGlobalError(null);
+    setExecutionTime(null);
+  }, []);
+
+  return { isRunning, executionTime, globalError, run, clearError };
 };
